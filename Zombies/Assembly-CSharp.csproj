@@ -46,8 +46,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\EnemyLogic.cs" />
      <Compile Include="Assets\Scripts\GameMaster.cs" />
      <Compile Include="Assets\Scripts\GoTo.cs" />
+     <Compile Include="Assets\Scripts\Shoot.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">

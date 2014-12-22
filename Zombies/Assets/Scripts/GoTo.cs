@@ -3,22 +3,20 @@ using System.Collections;
 
 public class GoTo : MonoBehaviour {
 
-	public Transform objective;
+	private GameObject objective;
 	private NavMeshAgent navmesh;
 
 	// Use this for initialization
 	void Start () {
 		navmesh = GetComponent<NavMeshAgent> ();
+		objective = GameObject.FindWithTag ("Player");
 	
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		navmesh.SetDestination (objective.position);
+		navmesh.SetDestination (objective.transform.position);
 	}
 
-	void OnGUI() {
-		GUI.Label(new Rect(10, 10, 100, 20), "Hello World!");
-	}
 }
 
