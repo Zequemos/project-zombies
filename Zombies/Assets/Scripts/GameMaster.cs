@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class GameMaster : MonoBehaviour {
 
 	public int zombiesToSpawn = 20;
-	private int zombiesSpawned;
+	static public int zombiesSpawned;
 	public GameObject zombie;
 	public GameObject pivot1;
 	public GameObject pivot2;

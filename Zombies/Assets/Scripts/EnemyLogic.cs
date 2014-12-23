@@ -4,6 +4,7 @@ using System.Collections;
 public class EnemyLogic : MonoBehaviour {
 
 	public int life = 1;
+	public Transform Enemy_dead;
 
 	// Use this for initialization
 	void Start () {
@@ -16,6 +17,12 @@ public class EnemyLogic : MonoBehaviour {
 	}
 	void ApplyDamage(){
 		-- life;
-		if (life <= 0) Destroy (gameObject);
+		if (life <= 0){
+
+			--GameMaster.zombiesSpawned;
+			Instantiate(Enemy_dead, transform.position, Quaternion.identity);
+			Destroy (gameObject);
+
+		} 
 	}
 }
