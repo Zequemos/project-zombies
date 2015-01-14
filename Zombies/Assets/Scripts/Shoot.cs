@@ -2,27 +2,48 @@
 using System.Collections;
 
 public class Shoot : MonoBehaviour {
-
-	private RaycastHit hit;
-	public GameObject Muzzle;
 	
-	public float damage = 1;
-	void Start(){
-	//Ray ray = camera.ScreenPointToRay(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0));
+	public GameObject bullet;
+	public int ammunition = 100;
+	public Transform muzzle;
+	private bool needReload;
+	private int currentAmmo;
+	private GUIStyle crossStyle = new GUIStyle();
+
+	void Start() {
+		currentAmmo = ammunition;
+		crossStyle.alignment = TextAnchor.MiddleCenter;
+		crossStyle.normal.textColor = Color.red;
 	}
-	void Update () {		
-		if (Input.GetButton ("Fire1")) {	
-		Ray ray = camera.ScreenPointToRay(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0));		
-			if (Physics.Raycast (ray.origin, ray.direction, out hit)) {							
-				if (hit.collider.tag == "Enemy") {										
-					hit.transform.gameObject.SendMessage ("ApplyDamage", damage);
+
+	void Update () {
+		if (currentAmmo <= 0)
+			needReload = true;
+		if (!GameMaster.isGameOver()) {
+			if (!needReload) {
+				if (Input.GetButtonDown ("Fire1")) {
+					GameObject shot = Instantiate(bullet, muzzle.position, transform.rotation) as GameObject;
+					shot.SendMessage("setCamera", camera);
+					--currentAmmo;
 				}
-				//Debug.DrawLine(Muzzle.transform.position, hit.point, Color.cyan, 0.01f);
-			}				
+			}
+			else if (Input.GetKeyDown(KeyCode.R))
+				reload();
 		}
 	}
 
-	void OnGUI(){
-		GUI.Label (new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20), "+");
+	void OnGUI() {
+		if (needReload)
+			GUI.Label (new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
+			           "SIN MUNICIÓN! (R)", crossStyle);
+		else
+			GUI.Label (new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20), "+", crossStyle);
+		GUI.Label(new Rect(1200, 10, Screen.width, Screen.height), "Munición: " + currentAmmo);
+	}
+
+	void reload() {
+		//TODO Animation reloading
+		currentAmmo = ammunition;
+		needReload = false;
 	}
 }
