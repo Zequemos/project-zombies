@@ -169,7 +169,7 @@
      <Compile Include="Assets\Scripts\Enemy_fall.cs" />
      <Compile Include="Assets\Scripts\GameMaster.cs" />
      <Compile Include="Assets\Scripts\GoTo.cs" />
-     <Compile Include="Assets\Scripts\Life.cs" />
+     <Compile Include="Assets\Scripts\PlayerLogic.cs" />
      <Compile Include="Assets\Scripts\Shoot.cs" />
      <Compile Include="Assets\Scripts\WeaponSelection.cs" />
      <Compile Include="Assets\rigid.cs" />

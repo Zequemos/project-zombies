@@ -4,12 +4,11 @@ using System.Collections.Generic;
 
 public class GameMaster : MonoBehaviour {
 	
-	public int zombiesToSpawn = 20;
-	public int zombiesIncreasePerRound = 5;
+	public int round = 1;
+	private int zombiesToSpawn;
 	public float roundDelay = 5f;
 	private static int zombiesRemaining, h, m, s;
 	private static bool gameOver, isWaitingRound, isWaitingClock;
-	private int zombiesBase, round;
 	private float roundDelayGUI;
 	private GUIStyle styleRound;
 	public GameObject zombie;
@@ -26,8 +25,7 @@ public class GameMaster : MonoBehaviour {
 		pivots.Add (pivot2);
 		pivots.Add (pivot3);
 		pivots.Add (pivot4);
-		zombiesRemaining = zombiesBase = zombiesToSpawn;
-		round = 1;
+		zombiesRemaining = zombiesToSpawn = getZombiesPerRound(round);
 		h = m = s = 0;
 		roundDelayGUI = 0f;
 		gameOver = isWaitingClock = isWaitingRound = false;
@@ -64,6 +62,7 @@ public class GameMaster : MonoBehaviour {
 		GUI.TextField (new Rect (10, 10, 80, 20), "RONDA " + round, styleRound);
 		GUI.Label(new Rect(15, 65, Screen.width, Screen.height), "Zombis restantes: " + zombiesRemaining);
 		GUI.Label(new Rect(15, 90, Screen.width, Screen.height), "Tiempo sobrevivido: " + getClock());
+		GUI.Label(new Rect(15, 125, Screen.width, Screen.height), "Arma Actual: " + PlayerLogic.GetWeapon());
 		if (isWaitingRound && roundDelayGUI >= 1)
 			GUI.TextField (new Rect(400, 300, 500, 30), "La RONDA " + (round + 1) +
 			               " empezará en... " + roundDelayGUI.ToString("#."), styleRound);
@@ -76,21 +75,19 @@ public class GameMaster : MonoBehaviour {
 	private void nextRound() {
 		isWaitingRound = false;
 		++round;
-		zombiesBase += zombiesIncreasePerRound;
-		zombiesRemaining = zombiesToSpawn = zombiesBase;
+		zombiesRemaining = zombiesToSpawn = getZombiesPerRound(round);
 	}
 
 	void restartGame() {
 		--round;
 		setGameOver(false);
-		zombiesBase -= round*(zombiesIncreasePerRound);
-		zombiesRemaining = zombiesToSpawn = zombiesBase;
+		round = 1;
+		zombiesRemaining = zombiesToSpawn = getZombiesPerRound (round);
 		foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
 			Destroy(enemy);
 		foreach (GameObject dead in GameObject.FindGameObjectsWithTag("Dead"))
 			Destroy(dead);
 		h = m = s = 0;
-		round = 1;
 	}
 
 	IEnumerator playedTime() {
@@ -112,6 +109,10 @@ public class GameMaster : MonoBehaviour {
 		return h.ToString("D2") + ":" + m.ToString("D2") + ":" + s.ToString("D2");
 	}
 
+	public static int getZombiesPerRound (int round) {
+		return round*round + 5;
+	}
+	
 	// In seconds
 	public static long getTime() {
 		return h*3600 + m*60 + s;
