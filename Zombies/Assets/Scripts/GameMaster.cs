@@ -5,18 +5,13 @@ using System.Collections.Generic;
 public class GameMaster : MonoBehaviour {
 	
 	public int zombiesToSpawn = 20;
-	public int zombiesLifeBase = 1;
-	public int zombiesDmgBase = 5;
 	public int zombiesIncreasePerRound = 5;
-	public int zombiesIncreaseLifeEach = 3;
-	public int lifeToIncrease = 1;
-	public int zombiesIncreaseDmgEach = 5;
-	public int dmgToIncrease = 1;
 	public float roundDelay = 5f;
-	private static int zombiesRemaining, zombiesLife, zombiesDmg, h, m, s;
+	private static int zombiesRemaining, h, m, s;
 	private static bool gameOver, isWaitingRound, isWaitingClock;
 	private int zombiesBase, round;
 	private float roundDelayGUI;
+	private GUIStyle styleRound;
 	public GameObject zombie;
 	public GameObject pivot1;
 	public GameObject pivot2;
@@ -32,8 +27,6 @@ public class GameMaster : MonoBehaviour {
 		pivots.Add (pivot3);
 		pivots.Add (pivot4);
 		zombiesRemaining = zombiesBase = zombiesToSpawn;
-		zombiesLife = zombiesLifeBase;
-		zombiesDmg = zombiesDmgBase;
 		round = 1;
 		h = m = s = 0;
 		roundDelayGUI = 0f;
@@ -65,7 +58,7 @@ public class GameMaster : MonoBehaviour {
 	}
 
 	void OnGUI() {
-		GUIStyle styleRound = new GUIStyle(GUI.skin.textField);
+		styleRound = new GUIStyle (GUI.skin.textField);
 		styleRound.alignment = TextAnchor.MiddleCenter;
 		styleRound.fontStyle = FontStyle.Bold;
 		GUI.TextField (new Rect (10, 10, 80, 20), "RONDA " + round, styleRound);
@@ -85,10 +78,6 @@ public class GameMaster : MonoBehaviour {
 		++round;
 		zombiesBase += zombiesIncreasePerRound;
 		zombiesRemaining = zombiesToSpawn = zombiesBase;
-		if (round%zombiesIncreaseLifeEach == 0)
-			zombiesLife += lifeToIncrease;
-		if (round%zombiesIncreaseDmgEach == 0)
-			zombiesDmg += dmgToIncrease;
 	}
 
 	void restartGame() {
@@ -96,8 +85,6 @@ public class GameMaster : MonoBehaviour {
 		setGameOver(false);
 		zombiesBase -= round*(zombiesIncreasePerRound);
 		zombiesRemaining = zombiesToSpawn = zombiesBase;
-		zombiesLife = zombiesLifeBase;
-		zombiesDmg = zombiesDmgBase;
 		foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
 			Destroy(enemy);
 		foreach (GameObject dead in GameObject.FindGameObjectsWithTag("Dead"))
@@ -123,14 +110,6 @@ public class GameMaster : MonoBehaviour {
 
 	public static string getClock() {
 		return h.ToString("D2") + ":" + m.ToString("D2") + ":" + s.ToString("D2");
-	}
-
-	public static int getZombiesLife() {
-		return zombiesLife;
-	}
-
-	public static int getZombiesDamage() {
-		return zombiesDmg;
 	}
 
 	// In seconds
