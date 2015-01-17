@@ -76,6 +76,8 @@ public class GameMaster : MonoBehaviour {
 		isWaitingRound = false;
 		++round;
 		zombiesRemaining = zombiesToSpawn = getZombiesPerRound(round);
+		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Dead"))
+			Destroy(obj);
 	}
 
 	void restartGame() {

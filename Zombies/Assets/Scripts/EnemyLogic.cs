@@ -20,14 +20,11 @@ public class EnemyLogic : MonoBehaviour {
 	}
 
 	void Update () {
-		if (!GameMaster.isGameOver()) {
-			if (!isAttacking)
-				navmesh.SetDestination(target.transform.position);
+		if (!GameMaster.isGameOver() && !isAttacking) {
+			navmesh.SetDestination(target.transform.position);
 			if (Vector3.Distance(transform.position, target.transform.position) <= distanceAttack) {
-				if (!isAttacking) {
-					//TODO Start animation
-					StartCoroutine(strike());
-				}
+				//TODO Start animation
+				StartCoroutine(strike());
 			}
 		}
 	}

@@ -11,14 +11,13 @@ public class Shoot : MonoBehaviour {
 	private GUIStyle crossStyle = new GUIStyle();
 	private RaycastHit hit;
 	public float knifeDamage = 5f;
-	public float knifeRange = 3f;
+	public float knifeRange = 2f;
 
 	void Start() {
 		currentAmmo = ammunition;
 	}
 
 	void Update () {
-		
 		if(PlayerLogic.GetWeapon() == 0) KnifeWeapon();
 		else if(PlayerLogic.GetWeapon() == 1) PistolWeapon();
 		else if(PlayerLogic.GetWeapon() == 2) MachinegunWeapon();
@@ -27,39 +26,38 @@ public class Shoot : MonoBehaviour {
 
 	void KnifeWeapon(){
 		if (!GameMaster.isGameOver ()) {
-				if (Input.GetButtonDown ("Fire1")) {
-						Ray ray = Camera.main.ScreenPointToRay (new Vector3 (Screen.width * 0.5f, Screen.height * 0.5f, 0));
-						if (Physics.Raycast (ray.origin, ray.direction, out hit)) {
-								if (hit.collider.tag == "Enemy" && hit.distance <= knifeRange) {
-										hit.transform.gameObject.SendMessage ("ApplyDamage", knifeDamage);
-									}
-						}
-					}
-
-			}
-	}
-	void PistolWeapon(){
-			if (currentAmmo <= 0)
-				needReload = true;
-			if (!GameMaster.isGameOver()) {
-				if (!needReload) {
-					if (Input.GetButtonDown ("Fire1")) {
-						Instantiate(bullet, muzzle.position, transform.rotation);
-						--currentAmmo;
-					}
+			if (Input.GetButtonDown ("Fire1")) {
+				Ray ray = Camera.main.ScreenPointToRay (new Vector3 (Screen.width * 0.5f, Screen.height * 0.5f, 0));
+				if (Physics.Raycast (ray.origin, ray.direction, out hit)) {
+					if (hit.collider.tag == "Enemy" && hit.distance <= knifeRange)
+						hit.transform.gameObject.SendMessage ("ApplyDamage", knifeDamage);
 				}
-				else if (Input.GetKeyDown(KeyCode.R))
-					reload();
 			}
-
 		}
-	void MachinegunWeapon(){
+	}
 
+	void PistolWeapon(){
+		if (currentAmmo <= 0)
+			needReload = true;
+		if (!GameMaster.isGameOver()) {
+			if (!needReload) {
+				if (Input.GetButtonDown ("Fire1")) {
+					Instantiate(bullet, muzzle.position, transform.rotation);
+					--currentAmmo;
+				}
+			}
+			else if (Input.GetKeyDown(KeyCode.R))
+				reload();
 		}
-	void GrenadeWeapon(){
+	}
 
-		}
+	void MachinegunWeapon() {
+		//TODO
+	}
 
+	void GrenadeWeapon() {
+		//TODO
+	}
 
 	void OnGUI() {
 		if (needReload)

@@ -16,7 +16,7 @@ public class Bullet : MonoBehaviour {
 		if (Physics.Raycast (ray.origin, ray.direction, out hit)) {
 			if (hit.collider.tag == "Enemy" && hit.distance <= range) {
 				hit.transform.gameObject.SendMessage("ApplyDamage", damage);
-				StartCoroutine(fastClear());
+				Destroy(gameObject);
 			}
 		}
 		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Dead"))
@@ -29,11 +29,6 @@ public class Bullet : MonoBehaviour {
 
 	IEnumerator clear() {
 		yield return new WaitForSeconds(range/speed);
-		Destroy(gameObject);
-	}
-
-	IEnumerator fastClear() {
-		yield return new WaitForSeconds(0.1f);
 		Destroy(gameObject);
 	}
 }
