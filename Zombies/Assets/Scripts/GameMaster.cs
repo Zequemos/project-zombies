@@ -63,6 +63,7 @@ public class GameMaster : MonoBehaviour {
 		GUI.Label(new Rect(15, 65, Screen.width, Screen.height), "Zombis restantes: " + zombiesRemaining);
 		GUI.Label(new Rect(15, 90, Screen.width, Screen.height), "Tiempo sobrevivido: " + getClock());
 		GUI.Label(new Rect(15, 125, Screen.width, Screen.height), "Arma Actual: " + PlayerLogic.GetWeapon());
+		GUI.Label(new Rect(15, 150, Screen.width, Screen.height), "Stamina: " + PlayerLogic.GetStamina());
 		if (isWaitingRound && roundDelayGUI >= 1)
 			GUI.TextField (new Rect(400, 300, 500, 30), "La RONDA " + (round + 1) +
 			               " empezará en... " + roundDelayGUI.ToString("#."), styleRound);

@@ -9,8 +9,6 @@ public class Enemy_fall : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		ignoreCollisions();
-		Vector3 v3Force = -1000 * transform.forward;
-		gameObject.rigidbody.AddForce(v3Force);
 		StartCoroutine(clear());
 		StartCoroutine(noRigidBody());
 	}

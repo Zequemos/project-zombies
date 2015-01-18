@@ -24,13 +24,13 @@ public class Shoot : MonoBehaviour {
 		else if(PlayerLogic.GetWeapon() == 3) GrenadeWeapon();
 	}
 
-	void KnifeWeapon(){
+	void KnifeWeapon() {
 		if (!GameMaster.isGameOver ()) {
 			if (Input.GetButtonDown ("Fire1")) {
 				Ray ray = Camera.main.ScreenPointToRay (new Vector3 (Screen.width * 0.5f, Screen.height * 0.5f, 0));
 				if (Physics.Raycast (ray.origin, ray.direction, out hit)) {
 					if (hit.collider.tag == "Enemy" && hit.distance <= knifeRange)
-						hit.transform.gameObject.SendMessage ("ApplyDamage", knifeDamage);
+						hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = knifeDamage, knockbackPower = 200, knockbackDirection = ray.direction });
 				}
 			}
 		}

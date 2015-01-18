@@ -37,11 +37,13 @@ public class EnemyLogic : MonoBehaviour {
 		isAttacking = false;
 	}
 
-	void ApplyDamage(float dmg) {
-		life -= dmg;
+	void ApplyDamage(KnockbackParameters args) {
+		life -= args.dmg;
 		if (life <= 0) {
 			Destroy(gameObject);
-			Instantiate(Enemy_dead, transform.position, transform.rotation);
+			Transform dead = (Transform) GameObject.Instantiate(Enemy_dead, transform.position, transform.rotation);
+			Vector3 v3Force = args.knockbackPower*args.knockbackDirection;
+			dead.rigidbody.AddForce(v3Force);
 			GameMaster.zombieKilled();
 		}
 	}

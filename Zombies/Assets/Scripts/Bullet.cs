@@ -15,7 +15,7 @@ public class Bullet : MonoBehaviour {
 		rigidbody.AddRelativeForce(new Vector3(-2, 0.5f, speed), ForceMode.VelocityChange);
 		if (Physics.Raycast (ray.origin, ray.direction, out hit)) {
 			if (hit.collider.tag == "Enemy" && hit.distance <= range) {
-				hit.transform.gameObject.SendMessage("ApplyDamage", damage);
+				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = damage, knockbackPower = 300, knockbackDirection = ray.direction });
 				Destroy(gameObject);
 			}
 		}
