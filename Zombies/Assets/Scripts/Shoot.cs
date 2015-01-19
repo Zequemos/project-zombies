@@ -15,6 +15,8 @@ public class Shoot : MonoBehaviour {
 
 	void Start() {
 		currentAmmo = ammunition;
+		/***/crossStyle.alignment = TextAnchor.MiddleCenter;
+		/***/crossStyle.normal.textColor = Color.red;
 	}
 
 	void Update () {
@@ -63,6 +65,8 @@ public class Shoot : MonoBehaviour {
 		if (needReload)
 			GUI.Label (new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
 			           "SIN MUNICIÓN! (R)", crossStyle);
+		/***/else
+		/***/	GUI.Label (new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20), "+", crossStyle);
 		GUI.Label(new Rect(1200, 10, Screen.width, Screen.height), "Munición: " + currentAmmo);
 	}
 
