@@ -11,20 +11,24 @@ public class GameMaster : MonoBehaviour {
 	private static bool gameOver, isWaitingRound, isWaitingClock;
 	private float roundDelayGUI;
 	private GUIStyle styleRound;
-	public GameObject zombie;
-	public GameObject pivot1;
-	public GameObject pivot2;
-	public GameObject pivot3;
-	public GameObject pivot4;
-	List<GameObject> pivots;
+	public GameObject zombie1, zombie2, zombie3, zombie4, zombie5, zombie6;
+	public GameObject pivot1, pivot2, pivot3, pivot4;
+	List<GameObject> pivots, zombies;
 	
 	// Use this for initialization
 	void Start () {
-		pivots = new List<GameObject> ();
-		pivots.Add (pivot1);
-		pivots.Add (pivot2);
-		pivots.Add (pivot3);
-		pivots.Add (pivot4);
+		pivots = new List<GameObject>();
+		zombies = new List<GameObject>();
+		pivots.Add(pivot1);
+		pivots.Add(pivot2);
+		pivots.Add(pivot3);
+		pivots.Add(pivot4);
+		zombies.Add(zombie1);
+		zombies.Add(zombie2);
+		zombies.Add(zombie3);
+		zombies.Add(zombie4);
+		zombies.Add(zombie5);
+		zombies.Add(zombie6);
 		zombiesRemaining = zombiesToSpawn = getZombiesPerRound(round);
 		h = m = s = 0;
 		roundDelayGUI = 0f;
@@ -34,14 +38,15 @@ public class GameMaster : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (!gameOver) {
-			int i = 0;
+			int i = 0, z = 0;
 			while (zombiesToSpawn > 0) {
 				if (i == pivots.Count) i = 0;
-				Instantiate(zombie, pivots[i].transform.position, Quaternion.identity);
+				if (z == zombies.Count) z = 0;
+				Instantiate(zombies[z], pivots[i].transform.position, Quaternion.identity);
 				--zombiesToSpawn;
-				++i;
+				++i; ++z;
 			}
-			if (zombiesRemaining == 0 && !isWaitingRound) {
+			if (zombiesRemaining <= 0 && !isWaitingRound) {
 				isWaitingRound = true;
 				roundDelayGUI = roundDelay;
 			}
