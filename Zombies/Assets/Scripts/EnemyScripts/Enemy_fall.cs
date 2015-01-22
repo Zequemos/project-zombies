@@ -21,11 +21,13 @@ public class Enemy_fall : MonoBehaviour {
 	IEnumerator noRigidBody() {
 		yield return new WaitForSeconds(rigidBodyDelay);
 		Destroy(rigidbody);
+		ignoreCollisions();
+		//FIXME: Cuando se queda sin rigidbody no ignora la colision con el jugador.
 	}
 
 	void ignoreCollisions() {
 		Physics.IgnoreCollision(gameObject.collider,
-		                        GameObject.FindGameObjectWithTag("Player").collider);
+		                        GameObject.FindWithTag("Player").collider);
 		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Enemy"))
 			Physics.IgnoreCollision(gameObject.collider, obj.collider);
 		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Dead")) {

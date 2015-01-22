@@ -6,15 +6,15 @@ public class Shoot : MonoBehaviour {
 	public GameObject bullet;
 	public GameObject grenade;
 	public GameObject light;
-	public int ammunition = 100;
+	public static int ammunition = 100;
 	public Transform muzzle;
-	private bool needReload;
-	private int currentAmmo;
+	private static bool needReload;
+	private static int currentAmmo;
 	private GUIStyle crossStyle = new GUIStyle();
 	private RaycastHit hit;
 	public float knifeDamage = 5f;
 	public float knifeRange = 2f;
-	private int timenext = 7; //para la ametralladora
+	private int timenext = 2; //para la ametralladora. Old: 7
 
 	void Start() {
 		currentAmmo = ammunition;
@@ -64,7 +64,7 @@ public class Shoot : MonoBehaviour {
 		if (!GameMaster.isGameOver()) {
 			if (!needReload) {
 				if (Input.GetButton ("Fire1")) {
-					if(timenext == 0){
+					if (timenext == 0) {
 						Instantiate(bullet, muzzle.position, transform.rotation);
 						StartCoroutine(fogonazo());						
 						--currentAmmo;
@@ -84,7 +84,7 @@ public class Shoot : MonoBehaviour {
 		if (!GameMaster.isGameOver()) {
 			if (!needReload) {
 				if (Input.GetButtonDown ("Fire1")) {
-					Instantiate(grenade, muzzle.position, transform.rotation);									
+					Instantiate(grenade, muzzle.position, transform.rotation);								
 					--currentAmmo;
 				}
 			}			
@@ -100,11 +100,12 @@ public class Shoot : MonoBehaviour {
 		GUI.Label(new Rect(1200, 10, Screen.width, Screen.height), "Munición: " + currentAmmo);
 	}
 
-	void reload() {
+	public static void reload() {
 		//TODO Animation reloading
 		currentAmmo = ammunition;
 		needReload = false;
 	}
+
 	IEnumerator fogonazo() {
 		light.SetActive (true);
 		yield return new WaitForSeconds(0.1f);

@@ -107,6 +107,7 @@ public class PlayerLogic : MonoBehaviour
 		restart = false;
 		health = maxHealth;
 		gameObject.transform.position = new Vector3(0, 1, 0);
+		Shoot.reload();
 		GameObject.FindWithTag("GameController").SendMessage("restartGame");
 	}
 }

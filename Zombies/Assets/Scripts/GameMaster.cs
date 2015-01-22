@@ -7,11 +7,11 @@ public class GameMaster : MonoBehaviour {
 	public int round = 1;
 	private int zombiesToSpawn;
 	public float roundDelay = 5f;
-	private static int zombiesRemaining, h, m, s;
+	private static int zombiesRemaining, bossCount, h, m, s;
 	private static bool gameOver, isWaitingRound, isWaitingClock;
 	private float roundDelayGUI;
 	private GUIStyle styleRound;
-	public GameObject zombie1, zombie2, zombie3, zombie4, zombie5, zombie6;
+	public GameObject zombie1, zombie2, zombie3, zombie4, zombie5, zombie6, fatZombie;
 	public GameObject pivot1, pivot2, pivot3, pivot4;
 	List<GameObject> pivots, zombies;
 	
@@ -31,6 +31,7 @@ public class GameMaster : MonoBehaviour {
 		zombies.Add(zombie6);
 		zombiesRemaining = zombiesToSpawn = getZombiesPerRound(round);
 		h = m = s = 0;
+		bossCount = zombiesRemaining/20;
 		roundDelayGUI = 0f;
 		gameOver = isWaitingClock = isWaitingRound = false;
 	}
@@ -40,10 +41,15 @@ public class GameMaster : MonoBehaviour {
 		if (!gameOver) {
 			int i = 0, z = 0;
 			while (zombiesToSpawn > 0) {
+				//FIXME: Al spawnear tantos zombies a la vez dan tirones de lag al inicio de las rondas.
 				if (i == pivots.Count) i = 0;
 				if (z == zombies.Count) z = 0;
 				Instantiate(zombies[z], pivots[i].transform.position, Quaternion.identity);
 				--zombiesToSpawn;
+				if (bossCount > 0) {
+					Instantiate(fatZombie, pivots[i].transform.position, Quaternion.identity);
+					--bossCount; ++zombiesRemaining;
+				}
 				++i; ++z;
 			}
 			if (zombiesRemaining <= 0 && !isWaitingRound) {
@@ -82,6 +88,7 @@ public class GameMaster : MonoBehaviour {
 		isWaitingRound = false;
 		++round;
 		zombiesRemaining = zombiesToSpawn = getZombiesPerRound(round);
+		bossCount = zombiesRemaining/20;
 		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Dead"))
 			Destroy(obj);
 	}

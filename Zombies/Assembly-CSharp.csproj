@@ -165,6 +165,7 @@
      <Compile Include="Assets\Imported\NGUI\Scripts\UI\UITooltip.cs" />
      <Compile Include="Assets\Imported\NGUI\Scripts\UI\UIViewport.cs" />
      <Compile Include="Assets\Scripts\Destroy.cs" />
+     <Compile Include="Assets\Scripts\EnemyScripts\BossLogic.cs" />
      <Compile Include="Assets\Scripts\EnemyScripts\EnemyLogic.cs" />
      <Compile Include="Assets\Scripts\EnemyScripts\Enemy_fall.cs" />
      <Compile Include="Assets\Scripts\EnemyScripts\GoTo.cs" />
