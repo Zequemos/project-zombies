@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f23ef82d4791c6c48bde1b4506bdd1ac
+guid: 3b16259921d18af438d7d62acc2240e9
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
@@ -7,34 +7,38 @@ ModelImporter:
     100002: Brazo2
     100004: Group1
     100006: Group2
-    100008: Mesh1
-    100010: Mesh2
-    100012: Mesh3
-    100014: Mesh4
-    100016: Mesh5
-    100018: Mesh6
-    100020: Mesh7
-    100022: Pierna1
-    100024: Pierna2
-    100026: Semitorso1
-    100028: Semitorso2
-    100030: //RootNode
+    100008: Group_1_1
+    100010: Mesh1
+    100012: Mesh2
+    100014: Mesh3
+    100016: Mesh4
+    100018: Mesh5
+    100020: Mesh6
+    100022: Mesh7
+    100024: Mesh8
+    100026: Pierna1
+    100028: Pierna2
+    100030: Semitorso1
+    100032: Semitorso_1_1
+    100034: //RootNode
     400000: Brazo1
     400002: Brazo2
     400004: Group1
     400006: Group2
-    400008: Mesh1
-    400010: Mesh2
-    400012: Mesh3
-    400014: Mesh4
-    400016: Mesh5
-    400018: Mesh6
-    400020: Mesh7
-    400022: Pierna1
-    400024: Pierna2
-    400026: Semitorso1
-    400028: Semitorso2
-    400030: //RootNode
+    400008: Group_1_1
+    400010: Mesh1
+    400012: Mesh2
+    400014: Mesh3
+    400016: Mesh4
+    400018: Mesh5
+    400020: Mesh6
+    400022: Mesh7
+    400024: Mesh8
+    400026: Pierna1
+    400028: Pierna2
+    400030: Semitorso1
+    400032: Semitorso_1_1
+    400034: //RootNode
     2300000: Mesh1
     2300002: Mesh2
     2300004: Mesh3
@@ -42,6 +46,7 @@ ModelImporter:
     2300008: Mesh5
     2300010: Mesh6
     2300012: Mesh7
+    2300014: Mesh8
     3300000: Mesh1
     3300002: Mesh2
     3300004: Mesh3
@@ -49,6 +54,7 @@ ModelImporter:
     3300008: Mesh5
     3300010: Mesh6
     3300012: Mesh7
+    3300014: Mesh8
     4300000: Mesh1
     4300002: Mesh2
     4300004: Mesh3
@@ -56,7 +62,9 @@ ModelImporter:
     4300008: Mesh5
     4300010: Mesh6
     4300012: Mesh7
+    4300014: Mesh8
     9500000: //RootNode
+    11100000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -108,6 +116,6 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 1
   additionalBone: 0
   userData: 

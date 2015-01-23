@@ -4,52 +4,25 @@ using System.Collections;
 public class PlayerLogic : MonoBehaviour
 {
 	public float maxHealth = 100f, maxStamina = 100f,
-		staminaPerSecond = 10f, staminaCostPerSecond = 20f;
-	private bool restart = false, running = false;
-	private float health, speed, runningSpeed;
+	staminaPerSecond = 10f, staminaCostPerSecond = 20f, runningSpeedMult = 1.5f;
+	private Animation animationWeapon;
+	private bool restart, running, apuntando, animApuntando;
+	private float health;
 	private GUIStyle healthStatus = new GUIStyle();
 	private static int actualWeapon = 0;
-	private static float stamina;
-
-	// Use this for initialization
-	void Start () {
+	private static float stamina, speed;
+	
+	void Start() {
+		restart = running = apuntando = animApuntando = false;
 		health = maxHealth;
 		stamina = maxStamina;
+		animationWeapon = GameObject.FindWithTag("Weapon").animation;
 		speed = gameObject.GetComponent<CharacterMotor>().movement.maxForwardSpeed;
-		runningSpeed = (int)(speed*1.5f);
 		healthStatus.normal.textColor = Color.green;
 		healthStatus.fontStyle = FontStyle.Bold;
 	}
-
-	// Update is called once per frame
-	void Update () {
-		if(Input.GetKey(KeyCode.Alpha1)) {
-			actualWeapon = 0;
-		} else if (Input.GetKey(KeyCode.Alpha2)) {
-			actualWeapon = 1;
-		} else if (Input.GetKey(KeyCode.Alpha3)) {
-			actualWeapon = 2;
-		} else if (Input.GetKey(KeyCode.Alpha4)) {
-			actualWeapon = 3;
-		} else if (Input.GetKey(KeyCode.LeftShift)) {
-			if (stamina > 0f) {
-				if (!running) {
-					changeMovementSpeed(runningSpeed);
-					running = true;
-				}
-				else
-					stamina = max(stamina - Time.deltaTime*staminaCostPerSecond, 0f);
-			}
-			else if (running) {
-				changeMovementSpeed(speed);
-				running = false;
-			}
-		} else if (running) {
-			changeMovementSpeed(speed);
-			running = false;
-		} else if (stamina < maxStamina)
-			stamina = min(stamina + Time.deltaTime*staminaPerSecond, maxStamina);
-
+	
+	void Update() {
 		if (health <= 0) {
 			if (restart) {
 				if (Input.GetKeyDown(KeyCode.Return))
@@ -60,9 +33,51 @@ public class PlayerLogic : MonoBehaviour
 				GameMaster.setGameOver(true);
 			}
 		}
+		else {
+			if (Input.GetKey(KeyCode.Alpha1)) {
+				actualWeapon = 0;
+			} else if (Input.GetKey(KeyCode.Alpha2)) {
+				actualWeapon = 1;
+			} else if (Input.GetKey(KeyCode.Alpha3)) {
+				actualWeapon = 2;
+			} else if (Input.GetKey(KeyCode.Alpha4)) {
+				actualWeapon = 3;
+			} else if (Input.GetKey(KeyCode.LeftShift)) {
+				if (stamina > 0f) {
+					if (!running) {
+						changeMovementSpeed(runningSpeedMult);
+						//TODO animacion corriendo
+						running = true;
+					}
+					else
+						stamina = max(stamina - Time.deltaTime*staminaCostPerSecond, 0f);
+				}
+				else if (running) {
+					changeMovementSpeed(1);
+					running = false;
+				}
+			}
+			else if (Input.GetMouseButton(1)) {
+				if (!apuntando && (actualWeapon == 1 || actualWeapon == 2))
+					StartCoroutine(apuntar());
+			} else if (apuntando) {
+				animApuntando = apuntando = false;
+				changeMovementSpeed(1);
+				animationWeapon.Stop();
+				animationWeapon.Play("Apuntar_Cadera");
+			}
+			else {
+				if (running) {
+					changeMovementSpeed(1);
+					//TODO stop animacion corriendo
+					running = false;
+				} else if (stamina < maxStamina)
+					stamina = min(stamina + Time.deltaTime*staminaPerSecond, maxStamina);
+			}
+		}
 	}
 
-	public static int GetWeapon () {
+	public static int GetWeapon() {
 		return actualWeapon;
 	}
 
@@ -70,11 +85,27 @@ public class PlayerLogic : MonoBehaviour
 		return (int)stamina;
 	}
 
-	private void changeMovementSpeed(float speed) {
+	IEnumerator apuntar() {
+		animApuntando = true;
+		animationWeapon.Play("Apuntar");
+		yield return new WaitForSeconds(animationWeapon.GetClip("Apuntar").length);
+		if (animApuntando) {
+			apuntando = true;
+			animationWeapon.Play("Apuntando");
+			changeMovementSpeed(0.5f);
+		}
+		else {
+			animationWeapon.Stop();
+			animationWeapon.Play("Apuntar_Cadera");
+			changeMovementSpeed(1);
+		}
+	}
+
+	void changeMovementSpeed(float multiplier) {
 		gameObject.GetComponent<CharacterMotor>().movement.maxForwardSpeed =
 			gameObject.GetComponent<CharacterMotor>().movement.maxSidewaysSpeed =
 				gameObject.GetComponent<CharacterMotor>().movement.maxBackwardsSpeed
-					= speed;
+				= speed*multiplier;
 	}
 
 	public static float max(float n1, float n2) {
@@ -110,5 +141,8 @@ public class PlayerLogic : MonoBehaviour
 		Shoot.reload();
 		GameObject.FindWithTag("GameController").SendMessage("restartGame");
 	}
-}
 
+	Animation getAnimationWeapon() {
+		return animationWeapon;
+	}
+}

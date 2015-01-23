@@ -3,14 +3,14 @@ using System.Collections;
 
 public class Shoot : MonoBehaviour {
 	
-	public GameObject bullet;
+	public GameObject pistol_bullet, machinegun_bullet;
 	public GameObject grenade;
 	public GameObject light;
 	public static int ammunition = 100;
 	public Transform muzzle;
 	private static bool needReload;
 	private static int currentAmmo;
-	private GUIStyle crossStyle = new GUIStyle();
+	private GUIStyle redStyle = new GUIStyle();
 	private RaycastHit hit;
 	public float knifeDamage = 5f;
 	public float knifeRange = 2f;
@@ -18,8 +18,8 @@ public class Shoot : MonoBehaviour {
 
 	void Start() {
 		currentAmmo = ammunition;
-		/***/crossStyle.alignment = TextAnchor.MiddleCenter;
-		/***/crossStyle.normal.textColor = Color.red;
+		redStyle.alignment = TextAnchor.MiddleCenter;
+		redStyle.normal.textColor = Color.red;
 	}
 
 	void Update () {
@@ -47,13 +47,13 @@ public class Shoot : MonoBehaviour {
 		if (!GameMaster.isGameOver()) {
 			if (!needReload) {
 				if (Input.GetButtonDown ("Fire1")) {
-					Instantiate(bullet, muzzle.position, transform.rotation);
+					Instantiate(pistol_bullet, muzzle.position, transform.rotation);
 					StartCoroutine(fogonazo());	
 					--currentAmmo;
 				}
 			}
-			else if (Input.GetKeyDown(KeyCode.R))
-				reload();
+			if (Input.GetKeyDown(KeyCode.R))
+				reload(); //waitForReload("Pistola");
 		}
 	}
 
@@ -65,16 +65,15 @@ public class Shoot : MonoBehaviour {
 			if (!needReload) {
 				if (Input.GetButton ("Fire1")) {
 					if (timenext == 0) {
-						Instantiate(bullet, muzzle.position, transform.rotation);
-						StartCoroutine(fogonazo());						
+						Instantiate(machinegun_bullet, muzzle.position, transform.rotation);
+						StartCoroutine(fogonazo());	
 						--currentAmmo;
 						timenext = 7;
 					} else --timenext;
-					
 				}
 			}
-			else if (Input.GetKeyDown(KeyCode.R))
-				reload();
+			if (Input.GetKeyDown(KeyCode.R))
+				reload(); //waitForReload("Ametralladora");
 		}
 	}
 
@@ -93,22 +92,26 @@ public class Shoot : MonoBehaviour {
 
 	void OnGUI() {
 		if (needReload)
-			GUI.Label (new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
-			           "SIN MUNICIÓN! (R)", crossStyle);
-		/***/else
-		/***/	GUI.Label (new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20), "+", crossStyle);
+			GUI.Label(new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
+			           "SIN MUNICIÓN! (R)", redStyle);
+		/*else
+			GUI.Label(new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20), "+", redStyle);*/
 		GUI.Label(new Rect(1200, 10, Screen.width, Screen.height), "Munición: " + currentAmmo);
 	}
 
+	/* TODO IEnumerator waitForReload(string weapon) {
+		yield return new WaitForSeconds(PlayerLogic.getAnimationWeapon().GetClip("Reload_" + weapon).length);
+		reload();
+	}*/
+
 	public static void reload() {
-		//TODO Animation reloading
-		currentAmmo = ammunition;
-		needReload = false;
+		currentAmmo = ammunition; //TODO cambiar segun el arma
+		needReload = false; //TODO cambiar segun el arma
 	}
 
 	IEnumerator fogonazo() {
-		light.SetActive (true);
+		light.SetActive(true);
 		yield return new WaitForSeconds(0.1f);
-		light.SetActive (false);
+		light.SetActive(false);
 	}
 }
