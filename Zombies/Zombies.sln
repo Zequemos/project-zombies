@@ -9,8 +9,6 @@ Project("{3655BF74-DA56-7FF2-FEF5-3D200B67B8A7}") = "Zombies", "Assembly-CSharp-
 EndProject
 Project("{3655BF74-DA56-7FF2-FEF5-3D200B67B8A7}") = "Zombies", "Assembly-UnityScript-firstpass.unityproj", "{2F357A79-B5DB-EB37-6357-173EA1DD044D}"
 EndProject
-Project("{3655BF74-DA56-7FF2-FEF5-3D200B67B8A7}") = "Zombies", "Assembly-UnityScript.unityproj", "{E4D1F6B4-A2C7-D5EF-56D0-F9B3EBA9AA1C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,15 +31,11 @@ Global
 		{2F357A79-B5DB-EB37-6357-173EA1DD044D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F357A79-B5DB-EB37-6357-173EA1DD044D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F357A79-B5DB-EB37-6357-173EA1DD044D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E4D1F6B4-A2C7-D5EF-56D0-F9B3EBA9AA1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E4D1F6B4-A2C7-D5EF-56D0-F9B3EBA9AA1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4D1F6B4-A2C7-D5EF-56D0-F9B3EBA9AA1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E4D1F6B4-A2C7-D5EF-56D0-F9B3EBA9AA1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																																																																																																																																		GlobalSection(MonoDevelopProperties) = preSolution
+																																																																																																																																						GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1

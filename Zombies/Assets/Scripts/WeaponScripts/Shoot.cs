@@ -5,9 +5,9 @@ public class Shoot : MonoBehaviour {
 	
 	public GameObject pistol_bullet, machinegun_bullet;
 	public GameObject grenade;
-	public GameObject light;
+	public GameObject lightPistola, lightAmetralladora;
 	public static int ammunition = 100;
-	public Transform muzzle;
+	public Transform muzzlePistola, muzzleAmetralladora;
 	private static bool needReload;
 	private static int currentAmmo;
 	private GUIStyle redStyle = new GUIStyle();
@@ -41,14 +41,18 @@ public class Shoot : MonoBehaviour {
 		}
 	}
 
-	void PistolWeapon(){
+	void PistolWeapon() {
 		if (currentAmmo <= 0)
 			needReload = true;
 		if (!GameMaster.isGameOver()) {
 			if (!needReload) {
 				if (Input.GetButtonDown ("Fire1")) {
-					Instantiate(pistol_bullet, muzzle.position, transform.rotation);
-					StartCoroutine(fogonazo());	
+					Instantiate(pistol_bullet, muzzlePistola.position, transform.rotation);
+					StartCoroutine(fogonazoPistola());
+					if (PlayerLogic.isApuntando())
+						PlayerLogic.getAnimationWeapon().Play("Retroceso_Apuntando");
+					else
+						PlayerLogic.getAnimationWeapon().Play("Retroceso_Cadera");
 					--currentAmmo;
 				}
 			}
@@ -58,17 +62,20 @@ public class Shoot : MonoBehaviour {
 	}
 
 	void MachinegunWeapon() {
-		if(timenext != 0)
 		if (currentAmmo <= 0)
 			needReload = true;
 		if (!GameMaster.isGameOver()) {
 			if (!needReload) {
-				if (Input.GetButton ("Fire1")) {
+				if (Input.GetMouseButton(0)) {
 					if (timenext == 0) {
-						Instantiate(machinegun_bullet, muzzle.position, transform.rotation);
-						StartCoroutine(fogonazo());	
+						Instantiate(machinegun_bullet, muzzleAmetralladora.position, transform.rotation);
+						StartCoroutine(fogonazoAmetralladora());
+						if (PlayerLogic.isApuntando())
+							PlayerLogic.getAnimationWeapon().Play("Retroceso_Apuntando");
+						else
+							PlayerLogic.getAnimationWeapon().Play("Retroceso_Cadera");
 						--currentAmmo;
-						timenext = 7;
+						timenext = 2;
 					} else --timenext;
 				}
 			}
@@ -83,7 +90,7 @@ public class Shoot : MonoBehaviour {
 		if (!GameMaster.isGameOver()) {
 			if (!needReload) {
 				if (Input.GetButtonDown ("Fire1")) {
-					Instantiate(grenade, muzzle.position, transform.rotation);								
+					Instantiate(grenade, muzzlePistola.position, transform.rotation);								
 					--currentAmmo;
 				}
 			}			
@@ -109,9 +116,15 @@ public class Shoot : MonoBehaviour {
 		needReload = false; //TODO cambiar segun el arma
 	}
 
-	IEnumerator fogonazo() {
-		light.SetActive(true);
+	IEnumerator fogonazoPistola() {
+		lightPistola.SetActive(true);
 		yield return new WaitForSeconds(0.1f);
-		light.SetActive(false);
+		lightPistola.SetActive(false);
+	}
+
+	IEnumerator fogonazoAmetralladora() {
+		lightAmetralladora.SetActive(true);
+		yield return new WaitForSeconds(0.1f);
+		lightAmetralladora.SetActive(false);
 	}
 }

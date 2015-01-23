@@ -7,8 +7,7 @@ public class Bullet : MonoBehaviour {
 	public int speed = 100;
 	public float damage = 1;
 	public float range = 100;
-	
-	// Use this for initialization
+
 	void Start() {
 		StartCoroutine(clear());
 		Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0));
