@@ -37,57 +37,63 @@ public class PlayerLogic : MonoBehaviour
 			}
 		}
 		else {
-			if (Input.GetKey(KeyCode.Alpha1)) { //Cuchillo
-				m9.SetActive(false);
-				ak47.SetActive(false);
-				//cuchillo.SetActive(true);
-				actualWeapon = 0;
-			} else if (Input.GetKey(KeyCode.Alpha2)) { //Pistola
-				//TODO animacion cambio de arma
-				ak47.SetActive(false);
-				//cuchillo.SetActive(false);
-				m9.SetActive(true);
-				actualWeapon = 1;
-			} else if (Input.GetKey(KeyCode.Alpha3)) { //Ametralladora
-				//cuchillo.SetActive(false);
-				m9.SetActive(false);
-				ak47.SetActive(true);
-				actualWeapon = 2;
-			} else if (Input.GetKey(KeyCode.Alpha4)) { //Granada
-				actualWeapon = 3;
-			} else if (Input.GetKey(KeyCode.LeftShift)) { //Correr
-				if (stamina > 0f) {
-					if (!running) {
-						changeMovementSpeed(runningSpeedMult);
-						//TODO animacion corriendo
-						running = true;
+			if (!apuntando) {
+				if (!running) {
+					if (Input.GetKey(KeyCode.Alpha1)) { //Cuchillo
+						m9.SetActive(false);
+						ak47.SetActive(false);
+						//cuchillo.SetActive(true);
+						actualWeapon = 0;
+					} else if (Input.GetKey(KeyCode.Alpha2)) { //Pistola
+						//TODO animacion cambio de arma
+						ak47.SetActive(false);
+						//cuchillo.SetActive(false);
+						m9.SetActive(true);
+						actualWeapon = 1;
+					} else if (Input.GetKey(KeyCode.Alpha3)) { //Ametralladora
+						//cuchillo.SetActive(false);
+						m9.SetActive(false);
+						ak47.SetActive(true);
+						actualWeapon = 2;
+					} else if (Input.GetKey(KeyCode.Alpha4)) { //Granada
+						actualWeapon = 3;
+						//cuchillo.SetActive(false);
+						m9.SetActive(false);
+						ak47.SetActive(false);
 					}
-					else
-						stamina = max(stamina - Time.deltaTime*staminaCostPerSecond, 0f);
-				}
-				else if (running) {
+					else if (Input.GetKey(KeyCode.LeftShift)) { //Correr
+						if (stamina > 0f) {
+							changeMovementSpeed(runningSpeedMult);
+							//TODO animacion corriendo
+							running = true;
+						}
+					}
+					else if (Input.GetMouseButton(1)) { //Apuntar
+						if (actualWeapon == 1 || actualWeapon == 2)
+							StartCoroutine(apuntar());
+					}
+					else if (stamina < maxStamina)
+						stamina = min(stamina + Time.deltaTime*staminaPerSecond, maxStamina);
+				} else if (stamina <= 0f) {
 					changeMovementSpeed(1);
+					//TODO stop animacion corriendo
 					running = false;
-				}
+				} else if (!Input.GetKey(KeyCode.LeftShift)) {
+					changeMovementSpeed(1);
+					//TODO stop animacion corriendo
+					running = false;
+				} else
+					stamina = max(stamina - Time.deltaTime*staminaCostPerSecond, 0f);
 			}
-			else if (Input.GetMouseButton(1)) { //Apuntar
-				if (!apuntando && (actualWeapon == 1 || actualWeapon == 2))
-					StartCoroutine(apuntar());
-			} else if (apuntando) {
+			else if (!Input.GetMouseButton(1)) {
 				animApuntando = apuntando = false;
 				changeMovementSpeed(1);
 				Animation animationWeapon = actualWeapon == 2 ? animationAmetralladora : animationPistola;
 				animationWeapon.Stop();
-				animationWeapon.Play("Apuntar_Cadera");
+				animationWeapon.Play(actualWeapon == 1 ? "Apuntar_Cadera" : "Apuntar_CaderaM");
 			}
-			else {
-				if (running) {
-					changeMovementSpeed(1);
-					//TODO stop animacion corriendo
-					running = false;
-				} else if (stamina < maxStamina)
-					stamina = min(stamina + Time.deltaTime*staminaPerSecond, maxStamina);
-			}
+			else if (stamina < maxStamina)
+				stamina = min(stamina + Time.deltaTime*staminaPerSecond, maxStamina);
 		}
 	}
 
@@ -102,16 +108,17 @@ public class PlayerLogic : MonoBehaviour
 	IEnumerator apuntar() {
 		animApuntando = true;
 		Animation animationWeapon = actualWeapon == 2 ? animationAmetralladora : animationPistola;
-		animationWeapon.Play("Apuntar");
-		yield return new WaitForSeconds(animationWeapon.GetClip("Apuntar").length);
+		string clipName = actualWeapon == 1 ? "Apuntar" : "ApuntarM";
+		animationWeapon.Play(clipName);
+		yield return new WaitForSeconds(animationWeapon.GetClip(clipName).length);
 		if (animApuntando) {
 			apuntando = true;
-			animationWeapon.Play("Apuntando");
+			animationWeapon.Play(actualWeapon == 1 ? "Apuntando" : "ApuntandoM");
 			changeMovementSpeed(0.5f);
 		}
 		else {
 			animationWeapon.Stop();
-			animationWeapon.Play("Apuntar_Cadera");
+			animationWeapon.Play(actualWeapon == 1 ? "Apuntar_Cadera" : "Apuntar_CaderaM");
 			changeMovementSpeed(1);
 		}
 	}
@@ -120,7 +127,7 @@ public class PlayerLogic : MonoBehaviour
 		gameObject.GetComponent<CharacterMotor>().movement.maxForwardSpeed =
 			gameObject.GetComponent<CharacterMotor>().movement.maxSidewaysSpeed =
 				gameObject.GetComponent<CharacterMotor>().movement.maxBackwardsSpeed
-				= speed*multiplier;
+					= speed*multiplier;
 	}
 
 	public static float max(float n1, float n2) {
@@ -161,6 +168,14 @@ public class PlayerLogic : MonoBehaviour
 		if (actualWeapon == 2)
 			return animationAmetralladora;
 		return animationPistola;
+	}
+
+	public static Animation getAnimationPistol() {
+		return animationPistola;
+	}
+
+	public static Animation getAnimationMachinegun() {
+		return animationAmetralladora;
 	}
 
 	public static bool isApuntando() {

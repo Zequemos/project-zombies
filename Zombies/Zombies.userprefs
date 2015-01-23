@@ -1,9 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\WeaponScripts\Shoot.cs">
     <Files>
-      <File FileName="Assets\Scripts\WeaponScripts\Shoot.cs" Line="17" Column="59" />
-      <File FileName="Assets\Scripts\PlayerLogic.cs" Line="9" Column="32" />
+      <File FileName="Assets\Scripts\WeaponScripts\Shoot.cs" Line="132" Column="14" />
+      <File FileName="Assets\Scripts\WeaponScripts\Explosion.cs" Line="28" Column="6" />
+      <File FileName="Assets\Scripts\PlayerLogic.cs" Line="173" Column="44" />
+      <File FileName="Assets\Scripts\GameMaster.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\EnemyScripts\BossLogic.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

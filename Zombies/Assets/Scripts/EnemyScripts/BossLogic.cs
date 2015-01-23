@@ -29,7 +29,7 @@ public class BossLogic : MonoBehaviour {
 		isAttacking = true;
 		yield return new WaitForSeconds(attackDelay);
 		if (isAttacking) {
-			Instantiate(explosion, transform.position, Quaternion.identity);
+			Instantiate(explosion, transform.position, transform.rotation);
 			Destroy(gameObject);
 			GameMaster.zombieKilled();
 		}

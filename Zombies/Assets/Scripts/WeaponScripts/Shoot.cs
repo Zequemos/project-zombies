@@ -14,7 +14,7 @@ public class Shoot : MonoBehaviour {
 	private RaycastHit hit;
 	public float knifeDamage = 5f;
 	public float knifeRange = 2f;
-	private int timenext = 2; //para la ametralladora. Old: 7
+	private int timenext = 3; //para la ametralladora
 
 	void Start() {
 		currentAmmo = ammunition;
@@ -46,13 +46,13 @@ public class Shoot : MonoBehaviour {
 			needReload = true;
 		if (!GameMaster.isGameOver()) {
 			if (!needReload) {
-				if (Input.GetButtonDown ("Fire1")) {
+				if (Input.GetButtonDown("Fire1")) {
 					Instantiate(pistol_bullet, muzzlePistola.position, transform.rotation);
 					StartCoroutine(fogonazoPistola());
 					if (PlayerLogic.isApuntando())
-						PlayerLogic.getAnimationWeapon().Play("Retroceso_Apuntando");
+						PlayerLogic.getAnimationPistol().Play("Retroceso_Apuntando");
 					else
-						PlayerLogic.getAnimationWeapon().Play("Retroceso_Cadera");
+						PlayerLogic.getAnimationPistol().Play("Retroceso_Cadera");
 					--currentAmmo;
 				}
 			}
@@ -71,11 +71,11 @@ public class Shoot : MonoBehaviour {
 						Instantiate(machinegun_bullet, muzzleAmetralladora.position, transform.rotation);
 						StartCoroutine(fogonazoAmetralladora());
 						if (PlayerLogic.isApuntando())
-							PlayerLogic.getAnimationWeapon().Play("Retroceso_Apuntando");
+							PlayerLogic.getAnimationMachinegun().Play("Retroceso_ApuntandoM");
 						else
-							PlayerLogic.getAnimationWeapon().Play("Retroceso_Cadera");
+							PlayerLogic.getAnimationMachinegun().Play("Retroceso_CaderaM");
 						--currentAmmo;
-						timenext = 2;
+						timenext = 3;
 					} else --timenext;
 				}
 			}
@@ -120,11 +120,19 @@ public class Shoot : MonoBehaviour {
 		lightPistola.SetActive(true);
 		yield return new WaitForSeconds(0.1f);
 		lightPistola.SetActive(false);
+		if (PlayerLogic.isApuntando())
+			PlayerLogic.getAnimationPistol().Play("Apuntando");
+		else
+			PlayerLogic.getAnimationPistol().Play("Apuntar_Cadera");
 	}
 
 	IEnumerator fogonazoAmetralladora() {
 		lightAmetralladora.SetActive(true);
 		yield return new WaitForSeconds(0.1f);
+		if (PlayerLogic.isApuntando())
+			PlayerLogic.getAnimationMachinegun().Play("ApuntandoM");
+		else
+			PlayerLogic.getAnimationMachinegun().Play("Apuntar_CaderaM");
 		lightAmetralladora.SetActive(false);
 	}
 }
