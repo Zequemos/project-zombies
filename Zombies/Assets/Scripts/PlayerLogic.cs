@@ -5,8 +5,9 @@ public class PlayerLogic : MonoBehaviour
 {
 	public float maxHealth = 100f, maxStamina = 100f,
 	staminaPerSecond = 10f, staminaCostPerSecond = 20f, runningSpeedMult = 1.5f;
-	public GameObject m9, ak47, cuchillo;
-	private static Animation animationAmetralladora, animationPistola;
+	public GameObject m9, ak47, cuchillo, granadaMano;
+	private GameObject granada;
+	private static Animation animationAmetralladora, animationPistola, animationCuchillo, animationGranada;
 	private static bool apuntando;
 	private bool restart, running, animApuntando;
 	private float health;
@@ -20,6 +21,9 @@ public class PlayerLogic : MonoBehaviour
 		stamina = maxStamina;
 		animationPistola = m9.animation;
 		animationAmetralladora = ak47.animation;
+		animationCuchillo = cuchillo.animation;
+		animationGranada = granadaMano.animation;
+		granada = granadaMano.transform.Find("FragFBX").gameObject;
 		speed = gameObject.GetComponent<CharacterMotor>().movement.maxForwardSpeed;
 		healthStatus.normal.textColor = Color.green;
 		healthStatus.fontStyle = FontStyle.Bold;
@@ -40,26 +44,33 @@ public class PlayerLogic : MonoBehaviour
 			if (!apuntando) {
 				if (!running) {
 					if (Input.GetKey(KeyCode.Alpha1)) { //Cuchillo
+						//TODO animacion cambio de arma
 						m9.SetActive(false);
 						ak47.SetActive(false);
-						//cuchillo.SetActive(true);
+						granadaMano.SetActive(false);
+						cuchillo.SetActive(true);
 						actualWeapon = 0;
 					} else if (Input.GetKey(KeyCode.Alpha2)) { //Pistola
 						//TODO animacion cambio de arma
 						ak47.SetActive(false);
-						//cuchillo.SetActive(false);
+						cuchillo.SetActive(false);
+						granadaMano.SetActive(false);
 						m9.SetActive(true);
 						actualWeapon = 1;
 					} else if (Input.GetKey(KeyCode.Alpha3)) { //Ametralladora
-						//cuchillo.SetActive(false);
+						//TODO animacion cambio de arma
+						cuchillo.SetActive(false);
 						m9.SetActive(false);
+						granadaMano.SetActive(false);
 						ak47.SetActive(true);
 						actualWeapon = 2;
 					} else if (Input.GetKey(KeyCode.Alpha4)) { //Granada
+						//TODO animacion cambio de arma
 						actualWeapon = 3;
-						//cuchillo.SetActive(false);
+						cuchillo.SetActive(false);
 						m9.SetActive(false);
 						ak47.SetActive(false);
+						granadaMano.SetActive(true);
 					}
 					else if (Input.GetKey(KeyCode.LeftShift)) { //Correr
 						if (stamina > 0f) {
@@ -84,6 +95,12 @@ public class PlayerLogic : MonoBehaviour
 					running = false;
 				} else
 					stamina = max(stamina - Time.deltaTime*staminaCostPerSecond, 0f);
+				if (actualWeapon == 3) {
+					if (Shoot.isReload())
+						granada.SetActive(false);
+					else if (!granada.activeSelf)
+						granada.SetActive(true);
+				}
 			}
 			else if (!Input.GetMouseButton(1)) {
 				animApuntando = apuntando = false;
@@ -165,9 +182,16 @@ public class PlayerLogic : MonoBehaviour
 	}
 
 	public static Animation getAnimationWeapon() {
-		if (actualWeapon == 2)
+		switch (actualWeapon) {
+		case 0:
+			return animationCuchillo;
+		case 2:
 			return animationAmetralladora;
-		return animationPistola;
+		case 3:
+			return animationGranada;
+		default:
+			return animationPistola;
+		}
 	}
 
 	public static Animation getAnimationPistol() {
@@ -176,6 +200,14 @@ public class PlayerLogic : MonoBehaviour
 
 	public static Animation getAnimationMachinegun() {
 		return animationAmetralladora;
+	}
+
+	public static Animation getAnimationCuchillo() {
+		return animationCuchillo;
+	}
+
+	public static Animation getAnimationGranada() {
+		return animationGranada;
 	}
 
 	public static bool isApuntando() {

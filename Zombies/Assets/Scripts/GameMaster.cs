@@ -140,8 +140,9 @@ public class GameMaster : MonoBehaviour {
 	public static void setGameOver(bool opt) {
 		gameOver = opt;
 		if (opt == true) {
-			foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
-				enemy.SendMessage("StopGame");
+			foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy")) {
+				try { enemy.SendMessage("StopGame"); } finally {}
+			}
 		}
 	}
 }
