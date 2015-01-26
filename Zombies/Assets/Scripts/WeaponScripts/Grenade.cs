@@ -14,6 +14,7 @@ public class Grenade : MonoBehaviour {
 	IEnumerator clear() {
 		yield return new WaitForSeconds(destroyDelay);
 		Instantiate(explosion, transform.position, Quaternion.identity);
+		explosion.audio.Play();
 		Destroy(gameObject);
 	}
 }

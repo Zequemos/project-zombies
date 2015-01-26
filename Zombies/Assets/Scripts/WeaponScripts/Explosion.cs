@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class Explosion : MonoBehaviour {
-
+	
 	public float damage = 20f;
 	//public int damageTime = 20;
 	public float range = 10f;

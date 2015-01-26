@@ -6,6 +6,7 @@ public class Shoot : MonoBehaviour {
 	public GameObject pistol_bullet, machinegun_bullet;
 	public GameObject grenade;
 	public GameObject lightPistola, lightAmetralladora;
+	public GameObject m9, ak47, cuchillo, granadaMano;
 	public static int ammunition = 100;
 	public Transform muzzlePistola, muzzleAmetralladora;
 	private static bool needReload;
@@ -15,12 +16,17 @@ public class Shoot : MonoBehaviour {
 	private bool knifeAttack1, knifeAttack2, launching;
 	public float knifeDamage = 5f, knifeRange = 2f, timeCuchillo1 = 0.5f, timeCuchillo2 = 1.5f;
 	private int timenext = 3; //para la ametralladora
+	private AudioSource[] audioAK47, audioPistol, audioGrenade, audioCuchillo;
 
 	void Start() {
 		currentAmmo = ammunition;
 		redStyle.alignment = TextAnchor.MiddleCenter;
 		redStyle.normal.textColor = Color.red;
 		knifeAttack1 = knifeAttack2 = launching = false;
+		audioAK47 = ak47.GetComponents<AudioSource>();
+		audioPistol = m9.GetComponents<AudioSource>();
+		audioGrenade = granadaMano.GetComponents<AudioSource>();
+		audioCuchillo = cuchillo.GetComponents<AudioSource>();
 	}
 
 	void Update () {
@@ -38,10 +44,9 @@ public class Shoot : MonoBehaviour {
 				if (Input.GetMouseButton(1))
 					StartCoroutine(cuchillo2());
 			}
-			else if (knifeAttack2 && !Input.GetMouseButton(1)) {
+			else if (knifeAttack2 && !Input.GetMouseButton(1))
+				//StartCoroutine(cuchilloMano());
 				PlayerLogic.getAnimationCuchillo().Play("ReposoCuchillo");
-				knifeAttack2 = false;
-			}
 		}
 	}
 
@@ -51,6 +56,7 @@ public class Shoot : MonoBehaviour {
 		if (!GameMaster.isGameOver()) {
 			if (!needReload) {
 				if (Input.GetButtonDown("Fire1")) {
+					audioPistol[0].Play(); //Disparo
 					Instantiate(pistol_bullet, muzzlePistola.position, transform.rotation);
 					StartCoroutine(fogonazoPistola());
 					if (PlayerLogic.isApuntando())
@@ -60,6 +66,8 @@ public class Shoot : MonoBehaviour {
 					--currentAmmo;
 				}
 			}
+			else if (Input.GetButtonDown("Fire1"))
+				audioPistol[2].Play(); //Gatillo vacio
 			if (Input.GetKeyDown(KeyCode.R))
 				reload(); //waitForReload("Pistola");
 		}
@@ -72,6 +80,9 @@ public class Shoot : MonoBehaviour {
 			if (!needReload) {
 				if (Input.GetMouseButton(0)) {
 					if (timenext == 0) {
+						audioAK47[0].Play(); //Disparo
+						audioAK47[2].Play(5777); //Casquillo
+						audioAK47[2].volume = 0.12f;
 						Instantiate(machinegun_bullet, muzzleAmetralladora.position, transform.rotation);
 						StartCoroutine(fogonazoAmetralladora());
 						if (PlayerLogic.isApuntando())
@@ -83,6 +94,8 @@ public class Shoot : MonoBehaviour {
 					} else --timenext;
 				}
 			}
+			else if (Input.GetMouseButton(0))
+				audioAK47[3].Play(); //Gatillo vacio
 			if (Input.GetKeyDown(KeyCode.R))
 				reload(); //waitForReload("Ametralladora");
 		}
@@ -159,8 +172,8 @@ public class Shoot : MonoBehaviour {
 		if (knifeAttack2 && Physics.Raycast(ray.origin, ray.direction, out hit)) {
 			if (hit.collider.tag == "Enemy" && hit.distance <= knifeRange)
 				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = 2*knifeDamage, knockbackPower = 250, knockbackDirection = ray.direction });
+			PlayerLogic.getAnimationCuchillo().Play("ReposoCuchillo");
 		}
-		PlayerLogic.getAnimationCuchillo().Play("ReposoCuchillo");
 		knifeAttack2 = false;
 	}
 
@@ -170,8 +183,14 @@ public class Shoot : MonoBehaviour {
 		PlayerLogic.getAnimationGranada().Play("LanzarGranada");
 		yield return new WaitForSeconds(0.7f);
 		Instantiate(grenade, muzzlePistola.position, transform.rotation);
+		yield return new WaitForSeconds(0.7f);
 		PlayerLogic.getAnimationGranada().Play("GranadaEnMano");
 		launching = false;
+	}
+
+	IEnumerator cuchilloMano() {
+		yield return new WaitForSeconds(0.5f);
+		PlayerLogic.getAnimationCuchillo().Play("ReposoCuchillo");
 	}
 	
 	public static bool isReload() {
