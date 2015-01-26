@@ -53,4 +53,9 @@ public class BossLogic : MonoBehaviour {
 			GameMaster.zombieKilled();
 		}
 	}
+
+	void StopGame() {
+		animation.Stop();
+		navmesh.Stop();
+	}
 }

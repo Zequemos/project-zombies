@@ -11,7 +11,7 @@ public class EnemyLogic : MonoBehaviour {
 	private bool isAttacking;
 	private NavMeshAgent navmesh;
 	private GameObject target;
-	private AudioSource[] ataques;
+	private AudioSource[] audio;
 	private Animation animCaminar, animAtaque;
 	
 	void Start() {
@@ -19,7 +19,7 @@ public class EnemyLogic : MonoBehaviour {
 		animCaminar = zombieWithAnimation.animation;
 		animAtaque = hombro.animation;
 		navmesh = GetComponent<NavMeshAgent>();
-		ataques = GetComponents<AudioSource>();
+		audio = GetComponents<AudioSource>();
 		target = GameObject.FindWithTag("Player");
 		animCaminar.Play("Caminar");
 	}
@@ -36,8 +36,11 @@ public class EnemyLogic : MonoBehaviour {
 		isAttacking = true;
 		animCaminar.Play("Stop");
 		animAtaque.Play("Ataque_Zombie");
-		if (Random.value >= 0.5f)
-			ataques[(int)Random.Range(0,2)].Play();
+		if (Random.value >= 0.5f) {
+			AudioSource audRd = audio[Random.Range(0,3)];
+			audRd.Play();
+			audRd.volume = 0.3f;
+		}
 		yield return new WaitForSeconds(attackDelay);
 		if (Vector3.Distance(transform.position, target.transform.position) <= distanceAttack)
 			target.transform.gameObject.SendMessage("ApplyDamage", damage);
@@ -50,6 +53,7 @@ public class EnemyLogic : MonoBehaviour {
 
 	void ApplyDamage(KnockbackParameters args) {
 		life -= args.dmg;
+		audio[3].Play();
 		if (life <= 0) {
 			Destroy(gameObject);
 			Transform dead = (Transform) GameObject.Instantiate(Enemy_dead, transform.position, transform.rotation);

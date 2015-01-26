@@ -4,18 +4,12 @@ using System.Collections;
 public class Explosion : MonoBehaviour {
 	
 	public float damage = 20f;
-	//public int damageTime = 20;
 	public float range = 10f;
 	public bool isBossExplosion = false;
 	
 	void Start() {
 		StartCoroutine(clear());
 	}
-
-	/*void Update() {
-		if (damageTime > 0)
-			--damageTime;
-	}*/
 
 	void OnTriggerEnter(Collider hit) {
         //if (damageTime > 0) {

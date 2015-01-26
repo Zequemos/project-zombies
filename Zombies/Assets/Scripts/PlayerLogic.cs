@@ -37,6 +37,7 @@ public class PlayerLogic : MonoBehaviour
 			}
 			else {
 				health = 0;
+				audio.Play();
 				GameMaster.setGameOver(true);
 			}
 		}
