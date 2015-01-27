@@ -7,6 +7,7 @@ public class Bullet : MonoBehaviour {
 	public int speed = 100;
 	public float damage = 1;
 	public float range = 100;
+	public GameObject bloodPrefab;
 
 	void Start() {
 		StartCoroutine(clear());
@@ -15,6 +16,7 @@ public class Bullet : MonoBehaviour {
 		if (Physics.Raycast (ray.origin, ray.direction, out hit)) {
 			if (hit.collider.tag == "Enemy" && hit.distance <= range) {
 				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = damage, knockbackPower = 300, knockbackDirection = ray.direction });
+				Instantiate (bloodPrefab, hit.transform.position, Quaternion.identity);
 				Destroy(gameObject);
 			}
 		}

@@ -14,6 +14,9 @@ public class PlayerLogic : MonoBehaviour
 	private GUIStyle healthStatus = new GUIStyle();
 	private static int actualWeapon = 0;
 	private static float stamina, speed;
+	public Texture redTexture; //esto es para que se dibuje sangre cuando te dañan
+	private bool drawTexture = false;
+	public float drawTime;
 	
 	void Start() {
 		restart = running = apuntando = animApuntando = false;
@@ -37,7 +40,6 @@ public class PlayerLogic : MonoBehaviour
 			}
 			else {
 				health = 0;
-				audio.Play();
 				GameMaster.setGameOver(true);
 			}
 		}
@@ -114,15 +116,15 @@ public class PlayerLogic : MonoBehaviour
 				stamina = min(stamina + Time.deltaTime*staminaPerSecond, maxStamina);
 		}
 	}
-
+	
 	public static int GetWeapon() {
 		return actualWeapon;
 	}
-
+	
 	public static int GetStamina() {
 		return (int)stamina;
 	}
-
+	
 	IEnumerator apuntar() {
 		animApuntando = true;
 		Animation animationWeapon = actualWeapon == 2 ? animationAmetralladora : animationPistola;
@@ -140,30 +142,36 @@ public class PlayerLogic : MonoBehaviour
 			changeMovementSpeed(1);
 		}
 	}
-
+	
 	void changeMovementSpeed(float multiplier) {
 		gameObject.GetComponent<CharacterMotor>().movement.maxForwardSpeed =
 			gameObject.GetComponent<CharacterMotor>().movement.maxSidewaysSpeed =
 				gameObject.GetComponent<CharacterMotor>().movement.maxBackwardsSpeed
-					= speed*multiplier;
+				= speed*multiplier;
 	}
-
+	
 	public static float max(float n1, float n2) {
 		return n1 >= n2 ? n1 : n2;
 	}
-
+	
 	public static float min(float n1, float n2) {
 		return n1 <= n2 ? n1 : n2;
 	}
-
+	
 	void ApplyDamage(float dmg) {
 		if (health > 0)
-			health -= dmg;
+			drawTexture = true;
+		health -= dmg;
 	}
-
+	
 	void OnGUI() {
 		GUI.Label(new Rect(15, 40, Screen.width, Screen.height),
 		          "Vida: " + (health > 0 ? health.ToString("#.##") : "0") + " / " + maxHealth, healthStatus);
+		if (drawTexture) {
+			StartCoroutine(drawingTexture());
+			GUI.DrawTexture (new Rect (0, 0, Screen.width, Screen.height), redTexture);
+			
+		}
 		if (GameMaster.isGameOver()) {
 			GUIStyle style = new GUIStyle(GUI.skin.textField);
 			style.alignment = TextAnchor.MiddleCenter;
@@ -173,7 +181,7 @@ public class PlayerLogic : MonoBehaviour
 			restart = true;
 		}
 	}
-
+	
 	void restartGame() {
 		restart = false;
 		health = maxHealth;
@@ -181,7 +189,12 @@ public class PlayerLogic : MonoBehaviour
 		Shoot.reload();
 		GameObject.FindWithTag("GameController").SendMessage("restartGame");
 	}
-
+	
+	IEnumerator drawingTexture(){
+		yield return new WaitForSeconds(drawTime);
+		drawTexture = false;
+	}
+	
 	public static Animation getAnimationWeapon() {
 		switch (actualWeapon) {
 		case 0:
@@ -194,23 +207,23 @@ public class PlayerLogic : MonoBehaviour
 			return animationPistola;
 		}
 	}
-
+	
 	public static Animation getAnimationPistol() {
 		return animationPistola;
 	}
-
+	
 	public static Animation getAnimationMachinegun() {
 		return animationAmetralladora;
 	}
-
+	
 	public static Animation getAnimationCuchillo() {
 		return animationCuchillo;
 	}
-
+	
 	public static Animation getAnimationGranada() {
 		return animationGranada;
 	}
-
+	
 	public static bool isApuntando() {
 		return apuntando;
 	}

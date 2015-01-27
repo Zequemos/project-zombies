@@ -7,19 +7,24 @@ public class Shoot : MonoBehaviour {
 	public GameObject grenade;
 	public GameObject lightPistola, lightAmetralladora;
 	public GameObject m9, ak47, cuchillo, granadaMano;
-	public static int ammunition = 100;
+	public static int pistolAmmunition = 7;
+	public static int machinegunAmmunition = 30;
+	public static int grenadeAmmunition = 15;
+	private int knifeAttacks = 0;
 	public Transform muzzlePistola, muzzleAmetralladora;
-	private static bool needReload;
-	private static int currentAmmo;
+	private static bool needReloadPistol, needReloadMachinegun;
+	private static int currentPistolAmmo, currentMachinegunAmmo, currentGrenadeAmmo;
 	private GUIStyle redStyle = new GUIStyle();
 	private RaycastHit hit;
 	private bool knifeAttack1, knifeAttack2, launching;
-	public float knifeDamage = 5, knifeRange = 2, timeCuchillo1 = 0.5f, timeCuchillo2 = 1.5f;
-	private int knifeAttacks = 0, timenext = 3; //para la ametralladora
+	public float knifeDamage = 5f, knifeRange = 2f, timeCuchillo1 = 0.5f, timeCuchillo2 = 1.5f;
+	private int timenext = 3; //para la ametralladora
 	private AudioSource[] audioAK47, audioPistol, audioGrenade, audioCuchillo;
 
 	void Start() {
-		currentAmmo = ammunition;
+		currentPistolAmmo = pistolAmmunition;
+		currentMachinegunAmmo = machinegunAmmunition;
+		currentGrenadeAmmo = grenadeAmmunition;
 		redStyle.alignment = TextAnchor.MiddleCenter;
 		redStyle.normal.textColor = Color.red;
 		knifeAttack1 = knifeAttack2 = launching = false;
@@ -52,10 +57,10 @@ public class Shoot : MonoBehaviour {
 	}
 
 	void PistolWeapon() {
-		if (currentAmmo <= 0)
-			needReload = true;
+		if (currentPistolAmmo <= 0)
+			needReloadPistol = true;
 		if (!GameMaster.isGameOver()) {
-			if (!needReload) {
+			if (!needReloadPistol) {
 				if (Input.GetButtonDown("Fire1")) {
 					audioPistol[0].Play(); //Disparo
 					Instantiate(pistol_bullet, muzzlePistola.position, transform.rotation);
@@ -64,7 +69,7 @@ public class Shoot : MonoBehaviour {
 						PlayerLogic.getAnimationPistol().Play("Retroceso_Apuntando");
 					else
 						PlayerLogic.getAnimationPistol().Play("Retroceso_Cadera");
-					--currentAmmo;
+					--currentPistolAmmo;
 				}
 			}
 			else if (Input.GetButtonDown("Fire1"))
@@ -75,22 +80,22 @@ public class Shoot : MonoBehaviour {
 	}
 
 	void MachinegunWeapon() {
-		if (currentAmmo <= 0)
-			needReload = true;
+		if (currentMachinegunAmmo <= 0)
+			needReloadMachinegun = true;
 		if (!GameMaster.isGameOver()) {
-			if (!needReload) {
+			if (!needReloadMachinegun) {
 				if (Input.GetMouseButton(0)) {
 					if (timenext == 0) {
 						audioAK47[0].Play(); //Disparo
-						audioAK47[2].PlayDelayed(0.131f); //Casquillo
-						audioAK47[2].volume = 0.2f;
+						audioAK47[2].Play(5777); //Casquillo
+						audioAK47[2].volume = 0.12f;
 						Instantiate(machinegun_bullet, muzzleAmetralladora.position, transform.rotation);
 						StartCoroutine(fogonazoAmetralladora());
 						if (PlayerLogic.isApuntando())
 							PlayerLogic.getAnimationMachinegun().Play("Retroceso_ApuntandoM");
 						else
 							PlayerLogic.getAnimationMachinegun().Play("Retroceso_CaderaM");
-						--currentAmmo;
+						--currentMachinegunAmmo;
 						timenext = 3;
 					} else --timenext;
 				}
@@ -103,23 +108,27 @@ public class Shoot : MonoBehaviour {
 	}
 
 	void GrenadeWeapon() {
-		if (currentAmmo <= 0)
-			needReload = true;
-		if (!GameMaster.isGameOver()) {
-			if (!needReload) {
-				if (!launching && Input.GetButtonDown("Fire1"))
-					StartCoroutine(launchGrenade());
-			}
+		if (currentGrenadeAmmo > 0 && !GameMaster.isGameOver() && !launching && Input.GetButtonDown("Fire1")){		
+			StartCoroutine(launchGrenade());		
 		}
+
 	}
 
 	void OnGUI() {
-		if (needReload)
-			GUI.Label(new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
-			           "SIN MUNICIÓN! (R)", redStyle);
-		/*else
-			GUI.Label(new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20), "+", redStyle);*/
-		GUI.Label(new Rect(1200, 10, Screen.width, Screen.height), "Munición: " + currentAmmo);
+
+		if (PlayerLogic.GetWeapon () == 1) {
+			GUI.Label (new Rect (1200, 10, Screen.width, Screen.height), "Munición: " + currentPistolAmmo);
+			if (needReloadPistol)
+				GUI.Label(new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
+				          "SIN MUNICIÓN! (R)", redStyle);
+		}else if(PlayerLogic.GetWeapon () == 2){
+			GUI.Label (new Rect (1200, 10, Screen.width, Screen.height), "Munición: " + currentMachinegunAmmo);
+			if (needReloadMachinegun)
+				GUI.Label(new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
+				          "SIN MUNICIÓN! (R)", redStyle);
+		}else if(PlayerLogic.GetWeapon () == 3){
+			GUI.Label (new Rect (1200, 10, Screen.width, Screen.height), "Munición: " + currentGrenadeAmmo);
+	}
 	}
 
 	/* TODO IEnumerator waitForReload(string weapon) {
@@ -128,8 +137,14 @@ public class Shoot : MonoBehaviour {
 	}*/
 
 	public static void reload() {
-		currentAmmo = ammunition; //TODO cambiar segun el arma
-		needReload = false; //TODO cambiar segun el arma
+		if (PlayerLogic.GetWeapon () == 1) {
+			currentPistolAmmo = pistolAmmunition;
+			needReloadPistol = false;
+		}else if(PlayerLogic.GetWeapon () == 2){
+			currentMachinegunAmmo = machinegunAmmunition;
+			needReloadMachinegun = false;
+		}		
+		 
 	}
 
 	IEnumerator fogonazoPistola() {
@@ -176,7 +191,7 @@ public class Shoot : MonoBehaviour {
 		if (knifeAttack2 && knifeAttacks <= 1) {
 			if (Physics.Raycast(ray.origin, ray.direction, out hit)
 			    && hit.collider.tag == "Enemy" && hit.distance <= knifeRange)
-					hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = 2*knifeDamage, knockbackPower = 250, knockbackDirection = ray.direction });
+				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = 2*knifeDamage, knockbackPower = 250, knockbackDirection = ray.direction });
 			audioCuchillo[0].Play(); //Grito de aliento
 			PlayerLogic.getAnimationCuchillo().Play("ReposoCuchillo");
 		}
@@ -186,7 +201,7 @@ public class Shoot : MonoBehaviour {
 
 	IEnumerator launchGrenade() {
 		launching = true;
-		--currentAmmo;
+		--currentGrenadeAmmo;
 		PlayerLogic.getAnimationGranada().Play("LanzarGranada");
 		yield return new WaitForSeconds(0.7f);
 		Instantiate(grenade, muzzlePistola.position, transform.rotation);
@@ -194,8 +209,10 @@ public class Shoot : MonoBehaviour {
 		PlayerLogic.getAnimationGranada().Play("GranadaEnMano");
 		launching = false;
 	}
-
+	
 	public static bool isReload() {
-		return needReload;
+		if (PlayerLogic.GetWeapon () == 1) return needReloadPistol;
+		if (PlayerLogic.GetWeapon () == 2) return needReloadMachinegun;
+		else return false;
 	}
 }
