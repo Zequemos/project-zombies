@@ -16,7 +16,9 @@ public class Bullet : MonoBehaviour {
 		if (Physics.Raycast (ray.origin, ray.direction, out hit)) {
 			if (hit.collider.tag == "Enemy" && hit.distance <= range) {
 				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = damage, knockbackPower = 300, knockbackDirection = ray.direction });
-				Instantiate (bloodPrefab, hit.transform.position, Quaternion.identity);
+				Vector3 posBlood = hit.transform.position;
+				posBlood.Set(posBlood.x, posBlood.y + 1, posBlood.z);
+				Instantiate(bloodPrefab, posBlood, Quaternion.identity);
 				Destroy(gameObject);
 			}
 		}

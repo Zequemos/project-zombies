@@ -87,8 +87,8 @@ public class Shoot : MonoBehaviour {
 				if (Input.GetMouseButton(0)) {
 					if (timenext == 0) {
 						audioAK47[0].Play(); //Disparo
-						audioAK47[2].Play(5777); //Casquillo
-						audioAK47[2].volume = 0.12f;
+						audioAK47[2].PlayDelayed(0.131f); //Casquillo
+						audioAK47[2].volume = 0.2f;
 						Instantiate(machinegun_bullet, muzzleAmetralladora.position, transform.rotation);
 						StartCoroutine(fogonazoAmetralladora());
 						if (PlayerLogic.isApuntando())
@@ -108,25 +108,22 @@ public class Shoot : MonoBehaviour {
 	}
 
 	void GrenadeWeapon() {
-		if (currentGrenadeAmmo > 0 && !GameMaster.isGameOver() && !launching && Input.GetButtonDown("Fire1")){		
-			StartCoroutine(launchGrenade());		
-		}
-
+		if (currentGrenadeAmmo > 0 && !GameMaster.isGameOver() && !launching && Input.GetButtonDown("Fire1"))	
+			StartCoroutine(launchGrenade());
 	}
 
 	void OnGUI() {
-
 		if (PlayerLogic.GetWeapon () == 1) {
 			GUI.Label (new Rect (1200, 10, Screen.width, Screen.height), "Munición: " + currentPistolAmmo);
 			if (needReloadPistol)
 				GUI.Label(new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
 				          "SIN MUNICIÓN! (R)", redStyle);
-		}else if(PlayerLogic.GetWeapon () == 2){
+		}else if (PlayerLogic.GetWeapon () == 2) {
 			GUI.Label (new Rect (1200, 10, Screen.width, Screen.height), "Munición: " + currentMachinegunAmmo);
 			if (needReloadMachinegun)
 				GUI.Label(new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
 				          "SIN MUNICIÓN! (R)", redStyle);
-		}else if(PlayerLogic.GetWeapon () == 3){
+		}else if (PlayerLogic.GetWeapon () == 3) {
 			GUI.Label (new Rect (1200, 10, Screen.width, Screen.height), "Munición: " + currentGrenadeAmmo);
 	}
 	}
@@ -137,14 +134,13 @@ public class Shoot : MonoBehaviour {
 	}*/
 
 	public static void reload() {
-		if (PlayerLogic.GetWeapon () == 1) {
+		if (PlayerLogic.GetWeapon() == 1) {
 			currentPistolAmmo = pistolAmmunition;
 			needReloadPistol = false;
-		}else if(PlayerLogic.GetWeapon () == 2){
+		} else if(PlayerLogic.GetWeapon() == 2) {
 			currentMachinegunAmmo = machinegunAmmunition;
 			needReloadMachinegun = false;
-		}		
-		 
+		}
 	}
 
 	IEnumerator fogonazoPistola() {
@@ -211,8 +207,8 @@ public class Shoot : MonoBehaviour {
 	}
 	
 	public static bool isReload() {
-		if (PlayerLogic.GetWeapon () == 1) return needReloadPistol;
-		if (PlayerLogic.GetWeapon () == 2) return needReloadMachinegun;
+		if (PlayerLogic.GetWeapon() == 1) return needReloadPistol;
+		if (PlayerLogic.GetWeapon() == 2) return needReloadMachinegun;
 		else return false;
 	}
 }

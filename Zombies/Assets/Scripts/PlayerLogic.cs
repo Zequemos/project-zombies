@@ -40,6 +40,7 @@ public class PlayerLogic : MonoBehaviour
 			}
 			else {
 				health = 0;
+				audio.Play();
 				GameMaster.setGameOver(true);
 			}
 		}
@@ -147,7 +148,7 @@ public class PlayerLogic : MonoBehaviour
 		gameObject.GetComponent<CharacterMotor>().movement.maxForwardSpeed =
 			gameObject.GetComponent<CharacterMotor>().movement.maxSidewaysSpeed =
 				gameObject.GetComponent<CharacterMotor>().movement.maxBackwardsSpeed
-				= speed*multiplier;
+					= speed*multiplier;
 	}
 	
 	public static float max(float n1, float n2) {
@@ -159,9 +160,10 @@ public class PlayerLogic : MonoBehaviour
 	}
 	
 	void ApplyDamage(float dmg) {
-		if (health > 0)
+		if (health > 0) {
 			drawTexture = true;
-		health -= dmg;
+			health -= dmg;
+		}
 	}
 	
 	void OnGUI() {
@@ -170,7 +172,6 @@ public class PlayerLogic : MonoBehaviour
 		if (drawTexture) {
 			StartCoroutine(drawingTexture());
 			GUI.DrawTexture (new Rect (0, 0, Screen.width, Screen.height), redTexture);
-			
 		}
 		if (GameMaster.isGameOver()) {
 			GUIStyle style = new GUIStyle(GUI.skin.textField);

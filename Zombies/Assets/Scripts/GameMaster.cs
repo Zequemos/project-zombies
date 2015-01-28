@@ -15,8 +15,7 @@ public class GameMaster : MonoBehaviour {
 	public GameObject zombie1, zombie2, zombie3, zombie4, zombie5, zombie6, fatZombie;
 	public GameObject pivot1, pivot2, pivot3, pivot4;
 	List<GameObject> pivots, zombies;
-	
-	// Use this for initialization
+
 	void Start () {
 		pivots = new List<GameObject>();
 		zombies = new List<GameObject>();
@@ -38,8 +37,7 @@ public class GameMaster : MonoBehaviour {
 		gameOver = isWaitingClock = isWaitingRound = false;
 		audio = GetComponents<AudioSource>();
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		if (!gameOver) {
 			if (zombiesToSpawn > 0) {

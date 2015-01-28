@@ -1,8 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\..\..\Unity Projects\Zombies\Assets\Scripts\PlayerLogic.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\WeaponScripts\Shoot.cs">
     <Files>
-      <File FileName="..\..\..\Unity Projects\Zombies\Assets\Scripts\PlayerLogic.cs" Line="10" Column="27" />
+      <File FileName="Assets\Scripts\PlayerLogic.cs" Line="175" Column="4" />
+      <File FileName="Assets\Scripts\WeaponScripts\Shoot.cs" Line="139" Column="13" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -6,7 +6,6 @@ public class Enemy_fall : MonoBehaviour {
 	public int destroyDelay = 180;
 	public int rigidBodyDelay = 10;
 
-	// Use this for initialization
 	void Start () {
 		ignoreCollisions();
 		StartCoroutine(clear());
