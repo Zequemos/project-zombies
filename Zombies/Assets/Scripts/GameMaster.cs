@@ -7,11 +7,11 @@ public class GameMaster : MonoBehaviour {
 	public int round = 1;
 	private int zombiesToSpawn;
 	public float roundDelay = 5, randomSoundDelay = 40;
-	private static int zombiesRemaining, bossCount, h, m, s, i, z;
-	private static bool gameOver, isWaitingRound, isWaitingClock;
-	private float roundDelayGUI, randomSoundTime;
+	private static int zombiesRemaining, bossCount, zombiesToPackage = 0, h, m, s, i, z;
+	private static bool gameOver, isWaitingRound, isWaitingClock, pedirPaquete;
+	private float roundDelayGUI = 0, randomSoundTime;
 	private GUIStyle styleRound;
-	private AudioSource[] audio;
+	private static AudioSource[] audioGM;
 	public GameObject zombie1, zombie2, zombie3, zombie4, zombie5, zombie6, fatZombie;
 	public GameObject pivot1, pivot2, pivot3, pivot4;
 	List<GameObject> pivots, zombies;
@@ -33,9 +33,8 @@ public class GameMaster : MonoBehaviour {
 		h = m = s = i = z = 0;
 		bossCount = zombiesRemaining/20;
 		randomSoundTime = randomSoundDelay;
-		roundDelayGUI = 0f;
-		gameOver = isWaitingClock = isWaitingRound = false;
-		audio = GetComponents<AudioSource>();
+		gameOver = isWaitingClock = isWaitingRound = pedirPaquete = false;
+		audioGM = GetComponents<AudioSource>();
 	}
 
 	void Update () {
@@ -63,7 +62,7 @@ public class GameMaster : MonoBehaviour {
 					nextRound();
 			}
 			if (randomSoundTime <= 0) {
-				audio[Random.Range(2, 5)].Play();
+				audioGM[Random.Range(2, 5)].Play();
 				randomSoundTime = randomSoundDelay;
 			}
 			else
@@ -87,6 +86,14 @@ public class GameMaster : MonoBehaviour {
 
 	public static void zombieKilled() {
 		--zombiesRemaining;
+		if (!pedirPaquete) {
+			if (zombiesToPackage >= 49) {
+				audioGM[5].Play();
+				zombiesToPackage = 0;
+			}
+			else
+				++zombiesToPackage;
+		}
 	}
 
 	private void nextRound() {
@@ -107,8 +114,8 @@ public class GameMaster : MonoBehaviour {
 			Destroy(enemy);
 		foreach (GameObject dead in GameObject.FindGameObjectsWithTag("Dead"))
 			Destroy(dead);
-		audio[0].Play(); //Alarma|Sirena
-		audio[1].Play(); //Musica ambiental
+		audioGM[0].Play(); //Alarma|Sirena
+		audioGM[1].Play(); //Musica ambiental
 		h = m = s = 0;
 	}
 

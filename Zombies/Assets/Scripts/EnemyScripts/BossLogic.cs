@@ -6,14 +6,15 @@ public class BossLogic : MonoBehaviour {
 	public float distanceAttack = 4;
 	public float attackDelay = 1;
 	public float life = 20;
-	public Transform Enemy_dead;
+	public Transform Enemy_dead, bossWithAnimation;
 	public GameObject explosion;
 	private bool isAttacking = false, grito = false;
 	private NavMeshAgent navmesh;
 	private GameObject target;
 
-	void Start () {
+	void Start() {
 		navmesh = GetComponent<NavMeshAgent>();
+		animation.Play("Correr");
 		target = GameObject.FindWithTag("Player");
 	}
 	
@@ -26,8 +27,10 @@ public class BossLogic : MonoBehaviour {
 				grito = true;
 				navmesh.speed += 3;
 			}
-			else if (dist <= distanceAttack)
+			else if (dist <= distanceAttack) {
+				animation.Play("BossParado");
 				StartCoroutine(explode());
+			}
 		}
 	}
 	

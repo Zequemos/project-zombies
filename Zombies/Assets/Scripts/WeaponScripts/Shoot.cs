@@ -22,7 +22,7 @@ public class Shoot : MonoBehaviour {
 	private bool knifeAttack1, knifeAttack2, launching;
 	public float knifeDamage = 5f, knifeRange = 2f, timeCuchillo1 = 0.5f, timeCuchillo2 = 1.5f;
 	private int timenext = 3; //para la ametralladora
-	private AudioSource[] audioAK47, audioPistol, audioGrenade, audioCuchillo;
+	private AudioSource[] audioAK47, audioPistol, audioCuchillo;
 
 	void Start() {
 		currentPistolAmmo = pistolAmmunition;
@@ -33,7 +33,6 @@ public class Shoot : MonoBehaviour {
 		knifeAttack1 = knifeAttack2 = launching = false;
 		audioAK47 = ak47.GetComponents<AudioSource>();
 		audioPistol = m9.GetComponents<AudioSource>();
-		audioGrenade = granadaMano.GetComponents<AudioSource>();
 		audioCuchillo = cuchillo.GetComponents<AudioSource>();
 		currCagadoresPistol = cargadoresPistol;
 		currCagadoresMachinegun = cargadoresMachinegun;
@@ -153,14 +152,12 @@ public class Shoot : MonoBehaviour {
 	}
 
 	public static void reset() {
-
 		currentPistolAmmo = pistolAmmunition;
 		needReloadPistol = false;
 		currentMachinegunAmmo = machinegunAmmunition;
 		needReloadMachinegun = false;
 		currCagadoresPistol = cargadoresPistol;
 		currCagadoresMachinegun = cargadoresMachinegun;
-
 	}
 
 	IEnumerator fogonazoPistola() {
