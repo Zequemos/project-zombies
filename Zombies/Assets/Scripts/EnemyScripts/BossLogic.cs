@@ -41,7 +41,7 @@ public class BossLogic : MonoBehaviour {
 			Instantiate(explosion, transform.position, transform.rotation);
 			explosion.audio.Play();
 			Destroy(gameObject);
-			GameMaster.zombieKilled();
+			GameMaster.zombieKilled(true);
 		}
 	}
 	
@@ -53,7 +53,7 @@ public class BossLogic : MonoBehaviour {
 			Transform dead = (Transform) GameObject.Instantiate(Enemy_dead, transform.position, transform.rotation);
 			Vector3 v3Force = args.knockbackPower*args.knockbackDirection;
 			dead.rigidbody.AddForce(v3Force);
-			GameMaster.zombieKilled();
+			GameMaster.zombieKilled(false);
 		}
 	}
 

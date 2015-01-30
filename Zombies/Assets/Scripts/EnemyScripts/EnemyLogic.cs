@@ -56,10 +56,10 @@ public class EnemyLogic : MonoBehaviour {
 		audioZ[3].Play();
 		if (life <= 0) {
 			Destroy(gameObject);
-			Transform dead = (Transform) GameObject.Instantiate(Enemy_dead, transform.position, transform.rotation);
+			Transform dead = (Transform) GameObject.Instantiate(Enemy_dead, transform.localPosition, transform.rotation);
 			Vector3 v3Force = args.knockbackPower*args.knockbackDirection;
 			dead.rigidbody.AddForce(v3Force);
-			GameMaster.zombieKilled();
+			GameMaster.zombieKilled(args.boss);
 		}
 	}
 

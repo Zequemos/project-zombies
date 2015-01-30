@@ -21,7 +21,7 @@ public class Shoot : MonoBehaviour {
 	private RaycastHit hit;
 	private bool knifeAttack1, knifeAttack2, launching;
 	public float knifeDamage = 5f, knifeRange = 2f, timeCuchillo1 = 0.5f, timeCuchillo2 = 1.5f;
-	private int timenext = 3; //para la ametralladora
+	private int timenext = 2; //para la ametralladora
 	private AudioSource[] audioAK47, audioPistol, audioCuchillo;
 
 	void Start() {
@@ -189,7 +189,7 @@ public class Shoot : MonoBehaviour {
 		Ray ray = Camera.main.ScreenPointToRay (new Vector3 (Screen.width * 0.5f, Screen.height * 0.5f, 0));
 		if (Physics.Raycast (ray.origin, ray.direction, out hit)) {
 			if (hit.collider.tag == "Enemy" && hit.distance <= knifeRange)
-				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = knifeDamage, knockbackPower = 200, knockbackDirection = ray.direction });
+				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = knifeDamage, knockbackPower = 200, knockbackDirection = ray.direction, boss = false });
 		}
 		PlayerLogic.getAnimationCuchillo().Play("ReposoCuchillo");
 		knifeAttack1 = false;
@@ -204,7 +204,7 @@ public class Shoot : MonoBehaviour {
 		if (knifeAttack2 && knifeAttacks <= 1) {
 			if (Physics.Raycast(ray.origin, ray.direction, out hit)
 			    && hit.collider.tag == "Enemy" && hit.distance <= knifeRange)
-				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = 2*knifeDamage, knockbackPower = 250, knockbackDirection = ray.direction });
+				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = 2*knifeDamage, knockbackPower = 250, knockbackDirection = ray.direction, boss = false });
 			audioCuchillo[0].Play(); //Grito de aliento
 			PlayerLogic.getAnimationCuchillo().Play("ReposoCuchillo");
 		}
@@ -226,6 +226,7 @@ public class Shoot : MonoBehaviour {
 	public static bool isReload() {
 		if (PlayerLogic.GetWeapon() == 1) return needReloadPistol;
 		if (PlayerLogic.GetWeapon() == 2) return needReloadMachinegun;
-		else return false;
+		if (PlayerLogic.GetWeapon() == 3) return currentGrenadeAmmo == 0;
+		return false;
 	}
 }

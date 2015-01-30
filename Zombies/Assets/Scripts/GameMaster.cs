@@ -84,9 +84,9 @@ public class GameMaster : MonoBehaviour {
 			               " empezará en... " + roundDelayGUI.ToString("#."), styleRound);
 	}
 
-	public static void zombieKilled() {
+	public static void zombieKilled(bool boss) {
 		--zombiesRemaining;
-		if (!pedirPaquete) {
+		if (!pedirPaquete && !boss) {
 			if (zombiesToPackage >= 49) {
 				audioGM[5].Play();
 				zombiesToPackage = 0;

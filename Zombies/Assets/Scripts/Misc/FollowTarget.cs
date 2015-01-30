@@ -11,15 +11,15 @@ public class FollowTarget : MonoBehaviour {
 	public float droneHeight;
 	private Vector3 dronePos;
 
-	void Start () {
+	void Start() {
 		thisTransform = transform;
 		transformAux.y = droneHeight;
 	}
 
-	void Update () {
+	void Update() {
 		if(velocity.x > 5f) velocity.x = 5f;
-		transformAux.x = Mathf.SmoothDamp( thisTransform.position.x, target.position.x, ref velocity.x, smoothTime);
-		transformAux.z = Mathf.SmoothDamp( thisTransform.position.z, target.position.z, ref velocity.y, smoothTime);
+		transformAux.x = Mathf.SmoothDamp(thisTransform.position.x, target.position.x, ref velocity.x, smoothTime);
+		transformAux.z = Mathf.SmoothDamp(thisTransform.position.z, target.position.z, ref velocity.y, smoothTime);
 		thisTransform.position = transformAux;
 	}
 }
