@@ -5,13 +5,15 @@ public class PlayerLogic : MonoBehaviour
 {
 	public float maxHealth = 100f, maxStamina = 100f,
 	staminaPerSecond = 10f, staminaCostPerSecond = 20f, runningSpeedMult = 1.5f;
+	public static int rondaPistola = 2, rondaMachinegun = 7, rondaGranada = 12;
 	public GameObject m9, ak47, cuchillo, granadaMano;
 	private GameObject granada;
 	private static Animation animationAmetralladora, animationPistola, animationCuchillo, animationGranada;
 	private static bool apuntando;
-	private bool restart, running, animApuntando;
+	private static bool running;
+	private bool restart, animApuntando;
 	private float health;
-	private GUIStyle healthStatus = new GUIStyle();
+	private GUIStyle healthStatus;
 	private static int actualWeapon = 0;
 	private static float stamina, speed;
 	public Texture redTexture; //esto es para que se dibuje sangre cuando te dañan
@@ -28,6 +30,7 @@ public class PlayerLogic : MonoBehaviour
 		animationGranada = granadaMano.animation;
 		granada = granadaMano.transform.Find("FragFBX").gameObject;
 		speed = gameObject.GetComponent<CharacterMotor>().movement.maxForwardSpeed;
+		healthStatus = new GUIStyle();
 		healthStatus.normal.textColor = Color.green;
 		healthStatus.fontStyle = FontStyle.Bold;
 	}
@@ -47,35 +50,18 @@ public class PlayerLogic : MonoBehaviour
 		else {
 			if (!apuntando) {
 				if (!running) {
-					if (Input.GetKey(KeyCode.Alpha1)) { //Cuchillo
-						//TODO animacion cambio de arma
-						m9.SetActive(false);
-						ak47.SetActive(false);
-						granadaMano.SetActive(false);
-						cuchillo.SetActive(true);
-						actualWeapon = 0;
-					} else if (Input.GetKey(KeyCode.Alpha2)) { //Pistola
-						//TODO animacion cambio de arma
-						ak47.SetActive(false);
-						cuchillo.SetActive(false);
-						granadaMano.SetActive(false);
-						m9.SetActive(true);
-						actualWeapon = 1;
-					} else if (Input.GetKey(KeyCode.Alpha3)) { //Ametralladora
-						//TODO animacion cambio de arma
-						cuchillo.SetActive(false);
-						m9.SetActive(false);
-						granadaMano.SetActive(false);
-						ak47.SetActive(true);
-						actualWeapon = 2;
-					} else if (Input.GetKey(KeyCode.Alpha4)) { //Granada
-						//TODO animacion cambio de arma
-						actualWeapon = 3;
-						cuchillo.SetActive(false);
-						m9.SetActive(false);
-						ak47.SetActive(false);
-						granadaMano.SetActive(true);
-					}
+					if (Input.GetKey(KeyCode.Alpha1)) //Cuchillo
+						changeWeaponTo(0);
+					else if (Input.GetKey(KeyCode.Alpha2) && isUnlocked(1, GameMaster.getRound())) //Pistola
+						changeWeaponTo(1);
+					else if (Input.GetKey(KeyCode.Alpha3) && isUnlocked(2, GameMaster.getRound())) //Ametralladora
+						changeWeaponTo(2);
+					else if (Input.GetKey(KeyCode.Alpha4) && isUnlocked(3, GameMaster.getRound())) //Granada
+						changeWeaponTo(3);
+					else if (Input.GetKey(KeyCode.Alpha5) && GameMaster.canPurchasePackage()) //Paquete de Munición
+						StartCoroutine(purchasePackage(1));
+					else if (Input.GetKey(KeyCode.Alpha6) && GameMaster.canPurchasePackage()) //Paquete de Vida
+						StartCoroutine(purchasePackage(2));
 					else if (Input.GetKey(KeyCode.LeftShift)) { //Correr
 						if (stamina > 0f) {
 							changeMovementSpeed(runningSpeedMult);
@@ -208,7 +194,74 @@ public class PlayerLogic : MonoBehaviour
 			return animationPistola;
 		}
 	}
-	
+
+	public void checkUpgrades(int ronda) {
+		//TODO Añadir mensajes de desbloqueo
+		if (ronda == rondaPistola)
+			changeWeaponTo(1);
+		else if (ronda == rondaMachinegun)
+			changeWeaponTo(2);
+		else if (ronda == rondaGranada)
+			changeWeaponTo(3);
+	}
+
+	public bool isUnlocked(int arma, int ronda) {
+		switch (arma) {
+		case 1:
+			return ronda >= rondaPistola;
+		case 2:
+			return ronda >= rondaMachinegun;
+		case 3:
+			return ronda >= rondaGranada;
+		default:
+			return true;
+		}
+	}
+
+	private void changeWeaponTo(int weapon) {
+		switch (weapon) {
+		case 0:
+			//TODO animacion cambio de arma
+			m9.SetActive(false);
+			ak47.SetActive(false);
+			granadaMano.SetActive(false);
+			cuchillo.SetActive(true);
+			break;
+		case 1:
+			//TODO animacion cambio de arma
+			ak47.SetActive(false);
+			cuchillo.SetActive(false);
+			granadaMano.SetActive(false);
+			m9.SetActive(true);
+			break;
+		case 2:
+			//TODO animacion cambio de arma
+			cuchillo.SetActive(false);
+			m9.SetActive(false);
+			granadaMano.SetActive(false);
+			ak47.SetActive(true);
+			break;
+		case 3:
+			//TODO animacion cambio de arma
+			cuchillo.SetActive(false);
+			m9.SetActive(false);
+			ak47.SetActive(false);
+			granadaMano.SetActive(true);
+			break;
+		}
+		actualWeapon = weapon;
+	}
+
+	private IEnumerator purchasePackage(int package) {
+		GameMaster.packagePurchased();
+		//TODO Añadir mensajes de audio
+		yield return new WaitForSeconds(20);
+		if (package == 1) //Municion
+			Shoot.reset();
+		else //Vida
+			health = maxHealth;
+	}
+
 	public static Animation getAnimationPistol() {
 		return animationPistola;
 	}
@@ -227,5 +280,9 @@ public class PlayerLogic : MonoBehaviour
 	
 	public static bool isApuntando() {
 		return apuntando;
+	}
+
+	public static bool isRunning() {
+		return running;
 	}
 }

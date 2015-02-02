@@ -3,20 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameMaster : MonoBehaviour {
-	
-	public int round = 1;
-	private int zombiesToSpawn;
+
+	public int initialRound = 1;
 	public float roundDelay = 5, randomSoundDelay = 40;
-	private static int zombiesRemaining, bossCount, zombiesToPackage = 0, h, m, s, i, z;
+	public GameObject zombie1, zombie2, zombie3, zombie4, zombie5, zombie6, fatZombie;
+	public GameObject pivot1, pivot2, pivot3, pivot4, player;
+	private int zombiesToSpawn;
+	private static int zombiesRemaining, round, bossCount, zombiesToPackage = 45, h, m, s, i, z;
 	private static bool gameOver, isWaitingRound, isWaitingClock, pedirPaquete;
 	private float roundDelayGUI = 0, randomSoundTime;
-	private GUIStyle styleRound;
+	private GUIStyle styleRound, packageStyle;
 	private static AudioSource[] audioGM;
-	public GameObject zombie1, zombie2, zombie3, zombie4, zombie5, zombie6, fatZombie;
-	public GameObject pivot1, pivot2, pivot3, pivot4;
-	List<GameObject> pivots, zombies;
+	private List<GameObject> pivots, zombies;
 
-	void Start () {
+	void Start() {
+		player = GameObject.FindGameObjectWithTag("Player");
 		pivots = new List<GameObject>();
 		zombies = new List<GameObject>();
 		pivots.Add(pivot1);
@@ -29,6 +30,7 @@ public class GameMaster : MonoBehaviour {
 		zombies.Add(zombie4);
 		zombies.Add(zombie5);
 		zombies.Add(zombie6);
+		round = initialRound;
 		zombiesRemaining = zombiesToSpawn = getZombiesPerRound(round);
 		h = m = s = i = z = 0;
 		bossCount = zombiesRemaining/20;
@@ -71,10 +73,14 @@ public class GameMaster : MonoBehaviour {
 	}
 
 	void OnGUI() {
-		styleRound = new GUIStyle (GUI.skin.textField);
+		styleRound = new GUIStyle(GUI.skin.textField);
 		styleRound.alignment = TextAnchor.MiddleCenter;
 		styleRound.fontStyle = FontStyle.Bold;
-		GUI.TextField (new Rect (10, 10, 80, 20), "RONDA " + round, styleRound);
+		packageStyle = new GUIStyle(GUI.skin.textField);
+		packageStyle.alignment = TextAnchor.MiddleCenter;
+		packageStyle.fontStyle = FontStyle.Bold;
+		packageStyle.normal.textColor = Color.cyan;
+		GUI.TextField(new Rect(10, 10, 80, 20), "RONDA " + round, styleRound);
 		GUI.Label(new Rect(15, 65, Screen.width, Screen.height), "Zombis restantes: " + zombiesRemaining);
 		GUI.Label(new Rect(15, 90, Screen.width, Screen.height), "Tiempo sobrevivido: " + getClock());
 		GUI.Label(new Rect(15, 125, Screen.width, Screen.height), "Arma Actual: " + PlayerLogic.GetWeapon());
@@ -82,6 +88,8 @@ public class GameMaster : MonoBehaviour {
 		if (isWaitingRound && roundDelayGUI >= 1)
 			GUI.TextField (new Rect(400, 300, 500, 30), "La RONDA " + (round + 1) +
 			               " empezará en... " + roundDelayGUI.ToString("#."), styleRound);
+		if (pedirPaquete)
+			GUI.TextField(new Rect(1000, 70, 300, 25), "PAQUETE DISPONIBLE: Munición (5), Vida (6)", packageStyle);
 	}
 
 	public static void zombieKilled(bool boss) {
@@ -89,10 +97,9 @@ public class GameMaster : MonoBehaviour {
 		if (!pedirPaquete && !boss) {
 			if (zombiesToPackage >= 49) {
 				audioGM[5].Play();
-				zombiesToPackage = 0;
+				pedirPaquete = true;
 			}
-			else
-				++zombiesToPackage;
+			++zombiesToPackage;
 		}
 	}
 
@@ -103,13 +110,13 @@ public class GameMaster : MonoBehaviour {
 		bossCount = zombiesRemaining/20;
 		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Dead"))
 			Destroy(obj);
+		player.SendMessage("checkUpgrades", round);
 	}
 
 	void restartGame() {
-		--round;
 		setGameOver(false);
-		round = 1;
-		zombiesRemaining = zombiesToSpawn = getZombiesPerRound (round);
+		round = initialRound;
+		zombiesRemaining = zombiesToSpawn = getZombiesPerRound(round);
 		foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
 			Destroy(enemy);
 		foreach (GameObject dead in GameObject.FindGameObjectsWithTag("Dead"))
@@ -134,6 +141,15 @@ public class GameMaster : MonoBehaviour {
 		}
 	}
 
+	public static bool canPurchasePackage() {
+		return pedirPaquete;
+	}
+
+	public static void packagePurchased() {
+		pedirPaquete = false;
+		zombiesToPackage = 0;
+	}
+
 	public static string getClock() {
 		return h.ToString("D2") + ":" + m.ToString("D2") + ":" + s.ToString("D2");
 	}
@@ -145,6 +161,10 @@ public class GameMaster : MonoBehaviour {
 	// In seconds
 	public static long getTime() {
 		return h*3600 + m*60 + s;
+	}
+
+	public static int getRound() {
+		return round;
 	}
 
 	public static bool isGameOver() {
