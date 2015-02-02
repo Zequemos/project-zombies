@@ -12,7 +12,7 @@ public class PlayerLogic : MonoBehaviour
 	private static bool apuntando;
 	private static bool running;
 	private bool restart, animApuntando;
-	private float health;
+	private static float health;
 	private GUIStyle healthStatus;
 	private static int actualWeapon = 0;
 	private static float stamina, speed;
@@ -260,6 +260,14 @@ public class PlayerLogic : MonoBehaviour
 			Shoot.reset();
 		else //Vida
 			health = maxHealth;
+	}
+
+	public static float getHealth (){
+		return health;
+	}
+
+	public static float getStamina (){
+		return stamina;
 	}
 
 	public static Animation getAnimationPistol() {

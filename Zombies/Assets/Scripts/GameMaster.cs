@@ -102,6 +102,9 @@ public class GameMaster : MonoBehaviour {
 			++zombiesToPackage;
 		}
 	}
+	public static int getZombiesToPackage(){
+		return zombiesToPackage;
+	}
 
 	private void nextRound() {
 		isWaitingRound = false;
