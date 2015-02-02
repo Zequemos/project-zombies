@@ -19,7 +19,7 @@ public class BossLogic : MonoBehaviour {
 	}
 	
 	void Update () {
-		if (!GameMaster.isGameOver() && !isAttacking) {
+		if (!GameMaster.isGameOver() && !isAttacking && !GameMaster.isPausedGame()) {
 			navmesh.SetDestination(target.transform.position);
 			float dist = Vector3.Distance(transform.position, target.transform.position);
 			if (!grito && dist <= (distanceAttack + 20)) {
@@ -60,5 +60,10 @@ public class BossLogic : MonoBehaviour {
 	void StopGame() {
 		animation.Stop();
 		navmesh.Stop();
+	}
+
+	void ResumeGame() {
+		animation.Play("Correr");
+		navmesh.Resume();
 	}
 }

@@ -24,8 +24,8 @@ public class EnemyLogic : MonoBehaviour {
 		animCaminar.Play("Caminar");
 	}
 
-	void Update () {
-		if (!GameMaster.isGameOver() && !isAttacking) {
+	void Update() {
+		if (!(GameMaster.isGameOver() || isAttacking || GameMaster.isPausedGame())) {
 			navmesh.SetDestination(target.transform.position);
 			if (Vector3.Distance(transform.position, target.transform.position) <= distanceAttack)
 				StartCoroutine(strike());
@@ -67,5 +67,10 @@ public class EnemyLogic : MonoBehaviour {
 		animCaminar.Stop();
 		animAtaque.Stop();
 		navmesh.Stop();
+	}
+
+	void ResumeGame() {
+		animCaminar.Play("Caminar");
+		navmesh.Resume();
 	}
 }

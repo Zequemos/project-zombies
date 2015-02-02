@@ -9,13 +9,12 @@ public class PlayerLogic : MonoBehaviour
 	public GameObject m9, ak47, cuchillo, granadaMano;
 	private GameObject granada;
 	private static Animation animationAmetralladora, animationPistola, animationCuchillo, animationGranada;
-	private static bool apuntando;
-	private static bool running;
+	private static bool apuntando, running;
 	private bool restart, animApuntando;
-	private static float health;
+	private float sensitivityX, sensitivityYCam, sensitivityXCam;
 	private GUIStyle healthStatus;
 	private static int actualWeapon = 0;
-	private static float stamina, speed;
+	private static float stamina, speed, health;
 	public Texture redTexture; //esto es para que se dibuje sangre cuando te dañan
 	private bool drawTexture = false;
 	public float drawTime;
@@ -33,10 +32,14 @@ public class PlayerLogic : MonoBehaviour
 		healthStatus = new GUIStyle();
 		healthStatus.normal.textColor = Color.green;
 		healthStatus.fontStyle = FontStyle.Bold;
+		sensitivityX = GetComponent<MouseLook>().sensitivityX;
+		sensitivityXCam = Camera.main.GetComponent<MouseLook>().sensitivityX;
+		sensitivityYCam = Camera.main.GetComponent<MouseLook>().sensitivityY;
 	}
 	
 	void Update() {
-		if (health <= 0) {
+		if (GameMaster.isPausedGame()) return;
+		else if (health <= 0) {
 			if (restart) {
 				if (Input.GetKeyDown(KeyCode.Return))
 					restartGame();
@@ -95,6 +98,7 @@ public class PlayerLogic : MonoBehaviour
 			else if (!Input.GetMouseButton(1)) {
 				animApuntando = apuntando = false;
 				changeMovementSpeed(1);
+				sensitivity(false);
 				Animation animationWeapon = actualWeapon == 2 ? animationAmetralladora : animationPistola;
 				animationWeapon.Stop();
 				animationWeapon.Play(actualWeapon == 1 ? "Apuntar_Cadera" : "Apuntar_CaderaM");
@@ -122,15 +126,17 @@ public class PlayerLogic : MonoBehaviour
 			apuntando = true;
 			animationWeapon.Play(actualWeapon == 1 ? "Apuntando" : "ApuntandoM");
 			changeMovementSpeed(0.5f);
+			sensitivity(true);
 		}
 		else {
 			animationWeapon.Stop();
 			animationWeapon.Play(actualWeapon == 1 ? "Apuntar_Cadera" : "Apuntar_CaderaM");
 			changeMovementSpeed(1);
+			sensitivity(false);
 		}
 	}
 	
-	void changeMovementSpeed(float multiplier) {
+	public void changeMovementSpeed(float multiplier) {
 		gameObject.GetComponent<CharacterMotor>().movement.maxForwardSpeed =
 			gameObject.GetComponent<CharacterMotor>().movement.maxSidewaysSpeed =
 				gameObject.GetComponent<CharacterMotor>().movement.maxBackwardsSpeed
@@ -153,8 +159,8 @@ public class PlayerLogic : MonoBehaviour
 	}
 	
 	void OnGUI() {
-		GUI.Label(new Rect(15, 40, Screen.width, Screen.height),
-		          "Vida: " + (health > 0 ? health.ToString("#.##") : "0") + " / " + maxHealth, healthStatus);
+		/*GUI.Label(new Rect(15, 40, Screen.width, Screen.height),
+		          "Vida: " + (health > 0 ? health.ToString("#.##") : "0") + " / " + maxHealth, healthStatus);*/
 		if (drawTexture) {
 			StartCoroutine(drawingTexture());
 			GUI.DrawTexture (new Rect (0, 0, Screen.width, Screen.height), redTexture);
@@ -197,12 +203,21 @@ public class PlayerLogic : MonoBehaviour
 
 	public void checkUpgrades(int ronda) {
 		//TODO Añadir mensajes de desbloqueo
-		if (ronda == rondaPistola)
+		bool upgraded = false;
+		if (ronda == rondaPistola) {
 			changeWeaponTo(1);
-		else if (ronda == rondaMachinegun)
+			upgraded = true;
+		}
+		else if (ronda == rondaMachinegun) {
 			changeWeaponTo(2);
-		else if (ronda == rondaGranada)
+			upgraded = true;
+		}
+		else if (ronda == rondaGranada) {
 			changeWeaponTo(3);
+			upgraded = true;
+		}
+		if (upgraded)
+			GameMaster.audioGM[5].Play();
 	}
 
 	public bool isUnlocked(int arma, int ronda) {
@@ -256,17 +271,42 @@ public class PlayerLogic : MonoBehaviour
 		GameMaster.packagePurchased();
 		//TODO Añadir mensajes de audio
 		yield return new WaitForSeconds(20);
-		if (package == 1) //Municion
-			Shoot.reset();
-		else //Vida
-			health = maxHealth;
+		if (!GameMaster.isGameOver()) {
+			if (package == 1) //Municion
+				Shoot.reset();
+			else //Vida
+				health = maxHealth;
+		}
 	}
 
-	public static float getHealth (){
+	private void sensitivity(bool apuntando) {
+		if (apuntando) {
+			GetComponent<MouseLook>().sensitivityX = 7;
+			Camera.main.GetComponent<MouseLook>().sensitivityX = 5;
+			Camera.main.GetComponent<MouseLook>().sensitivityY = 5;
+		} else {
+			GetComponent<MouseLook>().sensitivityX = sensitivityX;
+			Camera.main.GetComponent<MouseLook>().sensitivityY = sensitivityYCam;
+			Camera.main.GetComponent<MouseLook>().sensitivityX = sensitivityXCam;
+		}
+	}
+
+	public void stopPlayer(bool pause) {
+		if (pause)
+			gameObject.GetComponent<CharacterMotor>().enabled =
+				gameObject.GetComponent<MouseLook>().enabled =
+				Camera.main.GetComponent<MouseLook>().enabled = false;
+		else //Resume
+			gameObject.GetComponent<CharacterMotor>().enabled =
+				gameObject.GetComponent<MouseLook>().enabled =
+				Camera.main.GetComponent<MouseLook>().enabled = true;
+	}
+
+	public static float getHealth(){
 		return health;
 	}
 
-	public static float getStamina (){
+	public static float getStamina(){
 		return stamina;
 	}
 
