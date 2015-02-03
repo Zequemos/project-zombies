@@ -21,7 +21,7 @@ public class Shoot : MonoBehaviour {
 	private RaycastHit hit;
 	private bool knifeAttack1, knifeAttack2, launching;
 	public float knifeDamage = 5f, knifeRange = 2f, timeCuchillo1 = 0.5f, timeCuchillo2 = 1.5f;
-	private int timenext = 2; //para la ametralladora
+	private int timenext = 1; //para la ametralladora
 	private AudioSource[] audioAK47, audioPistol, audioCuchillo;
 
 	void Start() {
@@ -40,14 +40,16 @@ public class Shoot : MonoBehaviour {
 
 	void Update() {
 		if (!PlayerLogic.isRunning() && !GameMaster.isPausedGame()) {
-			if (PlayerLogic.GetWeapon() == 0) KnifeWeapon();
-			else if (PlayerLogic.GetWeapon() == 1) PistolWeapon();
-			else if (PlayerLogic.GetWeapon() == 2) MachinegunWeapon();
-			else if (PlayerLogic.GetWeapon() == 3) GrenadeWeapon();
+			switch (PlayerLogic.GetWeapon()) {
+				case 0: KnifeWeapon(); break;
+				case 1: PistolWeapon(); break;
+				case 2: MachinegunWeapon(); break;
+				case 3: GrenadeWeapon(); break;
+			}
 		}
 	}
 
-	void KnifeWeapon() {
+	private void KnifeWeapon() {
 		if (!GameMaster.isGameOver()) {
 			if (!(knifeAttack1 || knifeAttack2 || knifeAttacks >= 1)) {
 				if (Input.GetMouseButtonDown(0))
@@ -62,7 +64,7 @@ public class Shoot : MonoBehaviour {
 		}
 	}
 
-	void PistolWeapon() {
+	private void PistolWeapon() {
 		if (currentPistolAmmo <= 0)
 			needReloadPistol = true;
 		if (!GameMaster.isGameOver()) {
@@ -71,10 +73,6 @@ public class Shoot : MonoBehaviour {
 					audioPistol[0].Play(); //Disparo
 					Instantiate(pistol_bullet, muzzlePistola.position, transform.rotation);
 					StartCoroutine(fogonazoPistola());
-					if (PlayerLogic.isApuntando())
-						PlayerLogic.getAnimationPistol().Play("Retroceso_Apuntando");
-					else
-						PlayerLogic.getAnimationPistol().Play("Retroceso_Cadera");
 					--currentPistolAmmo;
 				}
 			}
@@ -85,7 +83,7 @@ public class Shoot : MonoBehaviour {
 		}
 	}
 
-	void MachinegunWeapon() {
+	private void MachinegunWeapon() {
 		if (currentMachinegunAmmo <= 0)
 			needReloadMachinegun = true;
 		if (!GameMaster.isGameOver()) {
@@ -97,12 +95,8 @@ public class Shoot : MonoBehaviour {
 						audioAK47[2].volume = 0.2f;
 						Instantiate(machinegun_bullet, muzzleAmetralladora.position, transform.rotation);
 						StartCoroutine(fogonazoAmetralladora());
-						if (PlayerLogic.isApuntando())
-							PlayerLogic.getAnimationMachinegun().Play("Retroceso_ApuntandoM");
-						else
-							PlayerLogic.getAnimationMachinegun().Play("Retroceso_CaderaM");
 						--currentMachinegunAmmo;
-						timenext = 3;
+						timenext = 1;
 					} else --timenext;
 				}
 			}
@@ -113,7 +107,7 @@ public class Shoot : MonoBehaviour {
 		}
 	}
 
-	void GrenadeWeapon() {
+	private void GrenadeWeapon() {
 		if (currentGrenadeAmmo > 0 && !GameMaster.isGameOver() && !launching && Input.GetButtonDown("Fire1"))	
 			StartCoroutine(launchGrenade());
 	}
@@ -141,21 +135,22 @@ public class Shoot : MonoBehaviour {
 			anim.Play("Reload_Pistola");
 			audioPistol[1].Play(); //Reload
 			yield return new WaitForSeconds(anim.GetClip("Reload_Pistola").length);
+			reload(1);
 		}
 		else if (weapon == 2 && currCargadoresMachinegun > 0 && currentMachinegunAmmo != machinegunAmmunition) {
 			anim.Play("Reload_Machinegun");
 			audioAK47[1].Play(); //Reload
 			yield return new WaitForSeconds(anim.GetClip("Reload_Machinegun").length);
+			reload(2);
 		}
-		reload(weapon);
 	}
 
 	public static void reload(int weapon) {
-		if (weapon == 1) {
+		if (weapon == 1 && currCargadoresPistol > 0) {
 			currentPistolAmmo = pistolAmmunition;
 			needReloadPistol = false;
 			--currCargadoresPistol;
-		} else if (weapon == 2) {
+		} else if (weapon == 2 && currCargadoresMachinegun > 0) {
 			currentMachinegunAmmo = machinegunAmmunition;
 			needReloadMachinegun = false;
 			--currCargadoresMachinegun;
@@ -175,7 +170,7 @@ public class Shoot : MonoBehaviour {
 	}
 	public static int getCurrentCargadores(int weapon){
 		if (weapon == 1) return currCargadoresPistol;
-		else if (weapon == 2) return currentMachinegunAmmo;
+		else if (weapon == 2) return currCargadoresMachinegun;
 		else return 0;
 	}
 
@@ -192,11 +187,11 @@ public class Shoot : MonoBehaviour {
 	IEnumerator fogonazoPistola() {
 		lightPistola.SetActive(true);
 		yield return new WaitForSeconds(0.1f);
-		lightPistola.SetActive(false);
 		if (PlayerLogic.isApuntando())
 			PlayerLogic.getAnimationPistol().Play("Apuntando");
 		else
 			PlayerLogic.getAnimationPistol().Play("Apuntar_Cadera");
+		lightPistola.SetActive(false);
 	}
 
 	IEnumerator fogonazoAmetralladora() {
@@ -215,10 +210,11 @@ public class Shoot : MonoBehaviour {
 		if (Random.value >= 0.5f)
 			audioCuchillo[0].Play(); //Grito de aliento
 		yield return new WaitForSeconds(timeCuchillo1);
-		Ray ray = Camera.main.ScreenPointToRay (new Vector3 (Screen.width * 0.5f, Screen.height * 0.5f, 0));
-		if (Physics.Raycast (ray.origin, ray.direction, out hit)) {
-			if (hit.collider.tag == "Enemy" && hit.distance <= knifeRange)
-				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = knifeDamage, knockbackPower = 200, knockbackDirection = ray.direction, boss = false });
+		Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0));
+		if (Physics.Raycast(ray.origin, ray.direction, out hit)) {
+			bool headshot = hit.collider.tag == "Headshot";
+			if ((headshot || hit.collider.tag == "Enemy") && hit.distance <= knifeRange)
+				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = headshot ? 2*knifeDamage : knifeDamage, knockbackPower = 200, knockbackDirection = ray.direction, boss = false });
 		}
 		PlayerLogic.getAnimationCuchillo().Play("ReposoCuchillo");
 		knifeAttack1 = false;
@@ -231,9 +227,11 @@ public class Shoot : MonoBehaviour {
 		yield return new WaitForSeconds(timeCuchillo2);
 		Ray ray = Camera.main.ScreenPointToRay (new Vector3 (Screen.width * 0.5f, Screen.height * 0.5f, 0));
 		if (knifeAttack2 && knifeAttacks <= 1) {
-			if (Physics.Raycast(ray.origin, ray.direction, out hit)
-			    && hit.collider.tag == "Enemy" && hit.distance <= knifeRange)
-				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = 2*knifeDamage, knockbackPower = 250, knockbackDirection = ray.direction, boss = false });
+			if (Physics.Raycast(ray.origin, ray.direction, out hit)) {
+				bool headshot = hit.collider.tag == "Headshot";
+				if ((headshot || hit.collider.tag == "Enemy") && hit.distance <= knifeRange)
+					hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = headshot ? 4*knifeDamage : 2*knifeDamage, knockbackPower = 250, knockbackDirection = ray.direction, boss = false });
+			}
 			audioCuchillo[0].Play(); //Grito de aliento
 			PlayerLogic.getAnimationCuchillo().Play("ReposoCuchillo");
 		}
