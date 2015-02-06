@@ -53,7 +53,7 @@ public class BossLogic : MonoBehaviour {
 			Transform dead = (Transform) GameObject.Instantiate(Enemy_dead, transform.position, transform.rotation);
 			Vector3 v3Force = args.knockbackPower*args.knockbackDirection;
 			dead.rigidbody.AddForce(v3Force);
-			GameMaster.zombieKilled(false);
+			GameMaster.zombieKilled(true);
 		}
 	}
 

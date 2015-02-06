@@ -13,9 +13,9 @@ public class Bullet : MonoBehaviour {
 		StartCoroutine(clear());
 		Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0));
 		rigidbody.AddRelativeForce(new Vector3(-2, 0.5f, speed), ForceMode.VelocityChange);
-		if (Physics.Raycast(ray.origin, ray.direction, out hit)) {
+		if (Physics.Raycast(ray, out hit, range)) {
 			bool headshot = hit.collider.tag == "Headshot";
-			if ((headshot || hit.collider.tag == "Enemy") && hit.distance <= range) {
+			if (headshot || hit.collider.tag == "Enemy") {
 				hit.transform.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = headshot ? 2*damage : damage, knockbackPower = 300, knockbackDirection = ray.direction, boss = false });
 				Vector3 posBlood = hit.transform.position;
 				posBlood.Set(posBlood.x, posBlood.y + 1, posBlood.z);

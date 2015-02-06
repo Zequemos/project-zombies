@@ -65,28 +65,27 @@ public class PlayerLogic : MonoBehaviour
 						StartCoroutine(purchasePackage(1));
 					else if (Input.GetKey(KeyCode.Alpha6) && GameMaster.canPurchasePackage()) //Paquete de Vida
 						StartCoroutine(purchasePackage(2));
-					else if (Input.GetKey(KeyCode.LeftShift)) { //Correr
+					else if (Input.GetKey(KeyCode.LeftShift) && !Shoot.isAnimReloading()) { //Correr
 						if (stamina > 0f) {
 							changeMovementSpeed(runningSpeedMult);
-							//TODO animacion corriendo
+							StartCoroutine(correr());
 							running = true;
 						}
 					}
-					else if (Input.GetMouseButton(1)) { //Apuntar
+					else if (Input.GetMouseButton(1) && !Shoot.isAnimReloading()) { //Apuntar
 						if (actualWeapon == 1 || actualWeapon == 2)
 							StartCoroutine(apuntar());
 					}
-					else if (stamina < maxStamina)
+					if (stamina < maxStamina)
 						stamina = min(stamina + Time.deltaTime*staminaPerSecond, maxStamina);
-				} else if (stamina <= 0f) {
-					changeMovementSpeed(1);
-					//TODO stop animacion corriendo
+				} else if (stamina <= 0f || !Input.GetKey(KeyCode.LeftShift)) {
 					running = false;
-				} else if (!Input.GetKey(KeyCode.LeftShift)) {
 					changeMovementSpeed(1);
-					//TODO stop animacion corriendo
-					running = false;
-				} else
+					if (actualWeapon == 1 || actualWeapon == 2) {
+						Animation animationWeapon = actualWeapon == 2 ? animationAmetralladora : animationPistola;
+						animationWeapon.Play(actualWeapon == 1 ? "Apuntar_Cadera" : "Apuntar_CaderaM");
+					}
+				} else if (stamina > 0f)
 					stamina = max(stamina - Time.deltaTime*staminaCostPerSecond, 0f);
 				if (actualWeapon == 3) {
 					if (Shoot.isReload())
@@ -103,7 +102,7 @@ public class PlayerLogic : MonoBehaviour
 				animationWeapon.Stop();
 				animationWeapon.Play(actualWeapon == 1 ? "Apuntar_Cadera" : "Apuntar_CaderaM");
 			}
-			else if (stamina < maxStamina)
+			if (stamina < maxStamina)
 				stamina = min(stamina + Time.deltaTime*staminaPerSecond, maxStamina);
 		}
 	}
@@ -265,6 +264,14 @@ public class PlayerLogic : MonoBehaviour
 			break;
 		}
 		actualWeapon = weapon;
+	}
+
+	private IEnumerator correr() {
+		Animation animationWeapon = actualWeapon == 2 ? animationAmetralladora : animationPistola;
+		animationWeapon.Play(actualWeapon == 2 ? "CorrerM" : "CorrerPistola");
+		yield return new WaitForSeconds(animationWeapon.GetClip(actualWeapon == 2 ? "CorrerM" : "CorrerPistola").length);
+		if (running)
+			animationWeapon.Play(actualWeapon == 2 ? "CorriendoM" : "CorriendoPistola");
 	}
 
 	private IEnumerator purchasePackage(int package) {

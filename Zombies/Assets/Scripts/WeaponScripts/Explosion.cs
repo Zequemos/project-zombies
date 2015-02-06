@@ -21,7 +21,7 @@ public class Explosion : MonoBehaviour {
 						StartCoroutine(bossSlowDown(hit.gameObject));
 				}
 				else if (hit.gameObject.CompareTag("Enemy"))
-				hit.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = damage - damage*(dist/range), knockbackPower = 500, knockbackDirection = -Vector3.forward, boss = isBossExplosion });
+					hit.gameObject.SendMessage("ApplyDamage", new KnockbackParameters{ dmg = damage - damage*(dist/range), knockbackPower = 500, knockbackDirection = -Vector3.forward, boss = isBossExplosion });
 			}
 		//}
     }

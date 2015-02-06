@@ -128,6 +128,7 @@ public class GameMaster : MonoBehaviour {
 		setGameOver(false);
 		round = initialRound;
 		zombiesRemaining = zombiesToSpawn = getZombiesPerRound(round);
+		bossCount = zombiesRemaining/20;
 		foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
 			Destroy(enemy);
 		foreach (GameObject dead in GameObject.FindGameObjectsWithTag("Dead"))
