@@ -117,19 +117,19 @@ public class Shoot : MonoBehaviour {
 
 	void OnGUI() {
 		if (PlayerLogic.GetWeapon () == 1) {
-			GUI.Label(new Rect (1200, 10, Screen.width, Screen.height), "Munición: " + currentPistolAmmo);
-			GUI.Label(new Rect (1200, 30, Screen.width, Screen.height), "Cargadores: " + currCargadoresPistol);
+			GUI.Label(new Rect (1200, 10, Screen.width, Screen.height), "Ammo: " + currentPistolAmmo);
+			GUI.Label(new Rect (1200, 30, Screen.width, Screen.height), "Magazines: " + currCargadoresPistol);
 			if (needReloadPistol)
 				GUI.Label(new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
-				          "SIN MUNICIÓN! (R)", redStyle);
+				          "RELOAD! (R)", redStyle);
 		} else if (PlayerLogic.GetWeapon () == 2) {
-			GUI.Label(new Rect (1200, 10, Screen.width, Screen.height), "Munición: " + currentMachinegunAmmo);
-			GUI.Label(new Rect (1200, 30, Screen.width, Screen.height), "Cargadores: " + currCargadoresMachinegun);
+			GUI.Label(new Rect (1200, 10, Screen.width, Screen.height), "Ammo: " + currentMachinegunAmmo);
+			GUI.Label(new Rect (1200, 30, Screen.width, Screen.height), "Magazines: " + currCargadoresMachinegun);
 			if (needReloadMachinegun)
 				GUI.Label(new Rect(Screen.width/2 - 10, Screen.height/2 - 10, 20, 20),
-				          "SIN MUNICIÓN! (R)", redStyle);
+				          "RELOAD! (R)", redStyle);
 		} else if (PlayerLogic.GetWeapon () == 3)
-			GUI.Label (new Rect (1200, 10, Screen.width, Screen.height), "Munición: " + currentGrenadeAmmo);
+			GUI.Label (new Rect (1200, 10, Screen.width, Screen.height), "Ammo: " + currentGrenadeAmmo);
 	}
 
 	IEnumerator waitForReload(int weapon) {

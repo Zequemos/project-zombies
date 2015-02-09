@@ -5,7 +5,7 @@ public class PlayerLogic : MonoBehaviour
 {
 	public float maxHealth = 100f, maxStamina = 100f,
 	staminaPerSecond = 10f, staminaCostPerSecond = 20f, runningSpeedMult = 1.5f;
-	public static int rondaPistola = 2, rondaMachinegun = 7, rondaGranada = 12;
+	public static int rondaPistola = 1, rondaMachinegun = 7, rondaGranada = 12;
 	public GameObject m9, ak47, cuchillo, granadaMano;
 	private GameObject granada;
 	private static Animation animationAmetralladora, animationPistola, animationCuchillo, animationGranada;
@@ -18,6 +18,7 @@ public class PlayerLogic : MonoBehaviour
 	public Texture redTexture; //esto es para que se dibuje sangre cuando te dañan
 	private bool drawTexture = false;
 	public float drawTime;
+	public Transform startPivot;
 	
 	void Start() {
 		restart = running = apuntando = animApuntando = false;
@@ -177,7 +178,7 @@ public class PlayerLogic : MonoBehaviour
 	void restartGame() {
 		restart = false;
 		health = maxHealth;
-		gameObject.transform.position = new Vector3(0, 1, 0);
+		gameObject.transform.position = startPivot.position;
 		Shoot.reset();
 		GameObject.FindWithTag("GameController").SendMessage("restartGame");
 	}

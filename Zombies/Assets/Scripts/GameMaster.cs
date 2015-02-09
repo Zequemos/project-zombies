@@ -79,14 +79,14 @@ public class GameMaster : MonoBehaviour {
 		styleRound = new GUIStyle(GUI.skin.textField);
 		styleRound.alignment = TextAnchor.MiddleCenter;
 		styleRound.fontStyle = FontStyle.Bold;
-		GUI.TextField(new Rect(10, 50, 80, 20), "RONDA " + round, styleRound);
-		GUI.Label(new Rect(15, 80, Screen.width, Screen.height), "Zombis restantes: " + zombiesRemaining);
+		GUI.TextField(new Rect(10, 50, 80, 20), "ROUND " + round, styleRound);
+		GUI.Label(new Rect(15, 80, Screen.width, Screen.height), "Zombies left: " + zombiesRemaining);
 		//GUI.Label(new Rect(15, 90, Screen.width, Screen.height), "Tiempo sobrevivido: " + getClock());
 		//GUI.Label(new Rect(15, 125, Screen.width, Screen.height), "Arma Actual: " + PlayerLogic.GetWeapon());
 		//GUI.Label(new Rect(15, 150, Screen.width, Screen.height), "Stamina: " + PlayerLogic.GetStamina());
 		if (isWaitingRound && roundDelayGUI >= 1)
-			GUI.TextField (new Rect(400, 300, 500, 30), "La RONDA " + (round + 1) +
-			               " empezará en... " + roundDelayGUI.ToString("#."), styleRound);
+			GUI.TextField (new Rect(400, 300, 500, 30), "Round " + (round + 1) +
+			               " will start in... " + roundDelayGUI.ToString("#."), styleRound);
 		/*if (pedirPaquete)
 			GUI.TextField(new Rect(1000, 70, 300, 25), "PAQUETE DISPONIBLE: Munición (5), Vida (6)", packageStyle);*/
 		if (pausedGame) {
@@ -95,7 +95,7 @@ public class GameMaster : MonoBehaviour {
 			packageStyle.fontStyle = FontStyle.Bold;
 			packageStyle.normal.textColor = Color.cyan;
 			GUI.TextField(new Rect(Screen.width/2 - 100, Screen.height/2 - 100, 200, 25),
-			              "JUEGO PAUSADO (P)", packageStyle);
+			              "GAME PAUSED (P)", packageStyle);
 		}
 	}
 
